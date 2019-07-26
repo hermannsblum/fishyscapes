@@ -24,7 +24,7 @@ url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Build settings
 markdown: kramdown
-theme: bulma-clean-theme
+remote_theme: bulma-clean-theme
 plugins:
   - jekyll-feed
 defaults:
