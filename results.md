@@ -6,8 +6,22 @@ show_sidebar: false
 hide_footer: true
 ---
 
-
 <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.7/dist/js/tabulator.min.js"></script>
+
+# Evaluation Method
+
+All evaluations are measured on our evaluation servers with data that is entirely unknown to the methods, in order to resemble true anomaly and make it harder for methods to overfit our data generation processes. This means that submissions contain binaries that are run over different input data.
+
+The 'Fishyscapes Web' dataset is updated every three months with a fresh query of objects from the web that are overlayed on cityscapes images using varying techniques for every run. Methods are especially tested on new datasets that are generated only after the method has been submitted to our benchmark.
+
+# Metrics
+
+We use Average Precision (AP) as the primary metric of our benchmark. It is invariant to data balance and we are therefore able to accurately compare methods regardless of how many pixels they label as anomaly.
+The tested methods output a continuous score for every pixel. We compute the metrics over all possible thresholds that a binary classifier could compare the output value with. The Average Precision is therefore also independent to the threshold a binary classifier could use.
+
+In order to highlight safety-critical applications, we also compute the False Positive Rate at 95% True Positive Rate (TPR@95%FPR). This resembles the False Positive Rate of a binary classifier that compares the output value of the method against a threshold and classifies all pixels as anomaly that are above the threshold. We take exactly that threshold that results in 95% True Positive Rate, because it is more important in safety-critical systems to catch all anomalies than reducing false positives.
+
+# Benchmark Results
 
 <div id="results-table" class="is-size-7"></div>
 
