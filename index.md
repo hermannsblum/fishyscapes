@@ -1,6 +1,6 @@
 ---
 title: The Fishyscapes Benchmark
-subtitle: Measuring Blind Spots in Semantic Segmentation
+subtitle: Anomaly Detection for Semantic Segmentation
 layout: page
 callouts:
   - image_callout
