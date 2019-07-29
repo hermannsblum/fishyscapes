@@ -11,13 +11,16 @@ $gap: 100px;
 .method {
     font-size: 0.75rem;
     @include mobile {
-        font-size: 0.4rem;
+        font-size: 0.5rem;
     }
     color: $white;
     margin-right: 5px;
 }
 .method-paper {
     font-size: 0.6rem;
+    @include mobile {
+        font-size: 0.4rem;
+    }
     font-style: italic;
 }
 a.method-paper:hover{
