@@ -80,15 +80,15 @@ var table = new Tabulator("#results-table", {
     //count - the number of rows in this group
     //data - an array of all the row data objects in this group
     //group - the group component for the group
-    var return_str = value;
+    var return_str = '<span class="method">' + value + '</span>';
     var found_paper = false;
     data.forEach(function(item) {
       console.log()
       if (!found_paper && item.paper != 'x') {
         if (item.paper_link)
-          return_str = value + '&nbsp;<a class="method-text" href="' + item.paper_link + '" target="_blank">' + item.paper + '</a>&nbsp;';
+          return_str = return_str + '<a class="method method-paper" href="' + item.paper_link + '" target="_blank">' + item.paper + '</a>';
         else
-          return_str = value + '&nbsp;<span class="method-text">' + item.paper + '</span>&nbsp;';
+          return_str = return_str + '</span><span class="method method-paper">' + item.paper + '</span>';
         found_paper = true;
       }
     });

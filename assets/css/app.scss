@@ -8,15 +8,19 @@ $gap: 100px;
 @import "main";
 @import "tabulator_bulma";
 
-.method-text {
-    font-size: 0.6rem;
+.method {
+    font-size: 0.75rem;
     @include mobile {
-        font-size: 0.3rem;
+        font-size: 0.4rem;
     }
     color: $white;
+    margin-right: 5px;
+}
+.method-paper {
+    font-size: 0.6rem;
     font-style: italic;
 }
-a.method-text:hover{
+a.method-paper:hover{
  text-decoration: underline;
  color: $white;
 }
