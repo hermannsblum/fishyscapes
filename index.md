@@ -13,7 +13,7 @@ hide_footer: false
 
 <div class="columns">
 <div class="column has-text-centered">
-<img width="400px" src="/assets/img/illustration.svg" />
+<img width="400px" src="{{ "/assets/img/illustration.svg" | relative_url }}" />
 </div>
 <div class="column" markdown="1">
 Some explanation
