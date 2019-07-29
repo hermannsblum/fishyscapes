@@ -19,7 +19,9 @@ The 'Fishyscapes Web' dataset is updated every three months with a fresh query o
 We use Average Precision (AP) as the primary metric of our benchmark. It is invariant to data balance and we are therefore able to accurately compare methods regardless of how many pixels they label as anomaly.
 The tested methods output a continuous score for every pixel. We compute the metrics over all possible thresholds that a binary classifier could compare the output value with. The Average Precision is therefore also independent to the threshold a binary classifier could use.
 
-In order to highlight safety-critical applications, we also compute the False Positive Rate at 95% True Positive Rate (TPR@95%FPR). This resembles the False Positive Rate of a binary classifier that compares the output value of the method against a threshold and classifies all pixels as anomaly that are above the threshold. We take exactly that threshold that results in 95% True Positive Rate, because it is more important in safety-critical systems to catch all anomalies than reducing false positives.
+In order to highlight safety-critical applications, we also compute the False Positive Rate at 95% True Positive Rate (TPR@95%FPR). This resembles the False Positive Rate of a binary classifier that compares the output value of the method against a threshold and classifies all pixels as anomaly that are above the threshold. We take exactly that threshold which results in 95% True Positive Rate, because it is important in safety-critical systems to catch all anomalies, and for this threshold then pick the method which has the lowest numer of false positives.
+
+$$ FPR_{95\%TPR} $$
 
 # Benchmark Results
 
@@ -78,7 +80,7 @@ var table = new Tabulator("#results-table", {
          sorter:"number",
          sorterParams:{alignEmptyValues: 'bottom'},
          headerSortStartingDir:"desc"},
-        {title:"FPR@95%TPR",
+        {title:"$$FPR_{95\%TPR}$$",
          field:"webjun19_FPR@95%TPR",
          align:"right",
          sorter:"number",
