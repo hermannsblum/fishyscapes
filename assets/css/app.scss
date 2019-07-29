@@ -10,6 +10,13 @@ $gap: 100px;
 
 .method-text {
     font-size: 0.6rem;
+    @include mobile {
+        font-size: 0.3rem;
+    }
     color: $white;
     font-style: italic;
+}
+a.method-text:hover{
+ text-decoration: underline;
+ color: $white;
 }

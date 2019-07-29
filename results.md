@@ -88,7 +88,7 @@ var table = new Tabulator("#results-table", {
         if (item.paper_link)
           return_str = value + '&nbsp;<a class="method-text" href="' + item.paper_link + '" target="_blank">' + item.paper + '</a>&nbsp;';
         else
-          return_str = value + '&nbsp;<span class="is-italic has-text-white is-size-7">' + item.paper + '</span>&nbsp;';
+          return_str = value + '&nbsp;<span class="method-text">' + item.paper + '</span>&nbsp;';
         found_paper = true;
       }
     });
