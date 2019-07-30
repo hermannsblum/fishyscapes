@@ -19,7 +19,7 @@ The 'Fishyscapes Web' dataset is updated every three months with a fresh query o
 We use Average Precision (AP) as the primary metric of our benchmark. It is invariant to data balance and we are therefore able to accurately compare methods regardless of how many pixels they label as anomaly.
 The tested methods output a continuous score for every pixel. We compute the metrics over all possible thresholds that a binary classifier could compare the output value with. The Average Precision is therefore also independent to the threshold a binary classifier could use.
 
-In order to highlight safety-critical applications, we also compute the False Positive Rate at 95% True Positive Rate (TPR@95%FPR). This resembles the False Positive Rate of a binary classifier that compares the output value of the method against a threshold and classifies all pixels as anomaly that are above the threshold. We take exactly that threshold which results in 95% True Positive Rate, because it is important in safety-critical systems to catch all anomalies, and for this threshold then pick the method which has the lowest numer of false positives.
+In order to highlight safety-critical applications, we also compute the False Positive Rate at 95% True Positive Rate (<svg height="1rem" viewBox="0 0 120 50" version="1.1"><text style="font-size:40px;line-height:125%;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="-4.5" y="38">FPR</text><text style="font-size:30px;line-height:125%;font-family:Montserrat;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="78.6" y="50.5">95</text></svg>). This resembles the False Positive Rate of a binary classifier that compares the output value of the method against a threshold and classifies all pixels as anomaly that are above the threshold. We take exactly that threshold which results in 95% True Positive Rate, because it is important in safety-critical systems to catch all anomalies, and for this threshold then pick the method which has the lowest numer of false positives.
 
 $$ FPR_{95\%TPR} $$
 
@@ -29,6 +29,10 @@ $$ FPR_{95\%TPR} $$
 
 <script>
 
+var fpr95 = '<svg height="0.9rem" viewBox="0 0 120 50" version="1.1"><text style="font-weight:bold;font-size:40px;line-height:125%;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="-4.5" y="38">FPR</text><text style="font-weight:bold;font-size:30px;line-height:125%;font-family:Montserrat;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="78.6" y="50.5">95</text></svg>';
+var black_cross = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve"><path fill="#222222" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"></path></svg>';
+var black_tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve"><path fill="#222222" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"></path></svg>';
+
  //create Tabulator on DOM element with id "example-table"
 var table = new Tabulator("#results-table", {
  	//height:205, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
@@ -37,6 +41,28 @@ var table = new Tabulator("#results-table", {
  	columns:[ //Define Table Columns
 	 	//{title:"Method", field:"method", width:150},
     {title:"Score", field:"score", width:150, headerSort:false},
+    {title: 'Method Requirements',
+     columns:[
+       {title:'retraining',
+        field:"requires_retraining",
+        align:"center",
+        formatter: 'lookup',
+        formatterParams: {'FALSE': black_cross, 'TRUE': black_tick},
+        headerSort:false},
+       {title:'OoD Data',
+        field:"requires_ood_data",
+        align:"center",
+        formatter: 'lookup',
+        formatterParams: {'FALSE': black_cross, 'TRUE': black_tick},
+        headerSort:false}]},
+    {title: 'Cityscapes',
+     columns:[
+       {title:'mIoU&nbsp;&nbsp;&nbsp;&nbsp;',
+        field:"cityscapes_miou",
+        align:"right",
+        sorter:"number",
+        sorterParams:{alignEmptyValues: 'bottom'},
+        headerSortStartingDir:"desc"}]},
 	 	{//column group
         title:"FS Static",
         columns:[
@@ -46,7 +72,7 @@ var table = new Tabulator("#results-table", {
          sorter:"number",
          sorterParams:{alignEmptyValues: 'bottom'},
          headerSortStartingDir:"desc"},
-        {title:"FPR@95%TPR",
+        {title:fpr95,
          field:"static_FPR@95%TPR",
          align:"right",
          sorter:"number",
@@ -63,7 +89,7 @@ var table = new Tabulator("#results-table", {
          sorter:"number",
          sorterParams:{alignEmptyValues: 'bottom'},
          headerSortStartingDir:"desc"},
-        {title:"FPR@95%TPR",
+        {title:fpr95,
          field:"webmar19_FPR@95%TPR",
          align:"right",
          sorter:"number",
@@ -80,7 +106,7 @@ var table = new Tabulator("#results-table", {
          sorter:"number",
          sorterParams:{alignEmptyValues: 'bottom'},
          headerSortStartingDir:"desc"},
-        {title:"$$FPR_{95\%TPR}$$",
+        {title:fpr95,
          field:"webjun19_FPR@95%TPR",
          align:"right",
          sorter:"number",
