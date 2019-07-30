@@ -21,7 +21,7 @@ The tested methods output a continuous score for every pixel. We compute the met
 
 In order to highlight safety-critical applications, we also compute the False Positive Rate at 95% True Positive Rate (<svg height="1rem" viewBox="0 0 120 50" version="1.1"><text style="font-size:40px;line-height:125%;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="-4.5" y="38">FPR</text><text style="font-size:30px;line-height:125%;font-family:Montserrat;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="78.6" y="50.5">95</text></svg>). This resembles the False Positive Rate of a binary classifier that compares the output value of the method against a threshold and classifies all pixels as anomaly that are above the threshold. We take exactly that threshold which results in 95% True Positive Rate, because it is important in safety-critical systems to catch all anomalies, and for this threshold then pick the method which has the lowest numer of false positives.
 
-$$ FPR_{95\%TPR} $$
+For methods that cannot use pretrained segmentation models, but require a special loss, this training or retraining can decrease the performance of the semantic segmentation. We therefore also report the mean intersection over union (mIoU) on the Cityscapes validation set.
 
 # Benchmark Results
 
@@ -173,3 +173,5 @@ fetch('https://spreadsheets.google.com/feeds/cells/1fJy2tsru1Sza37IZGk3PqTGbpA_k
   });
 });
 </script>
+<br><br>
+Methods that are not attributed in the table are adaptations to semantic segmentation based on different related works. The method details are presented in the [benchmark paper](https://arxiv.org/abs/1904.03215).
