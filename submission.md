@@ -3,7 +3,7 @@ title: Submission
 # subtitle: This is the demo site for Bulma Clean Theme
 layout: page
 show_sidebar: false
-hide_footer: true
+hide_footer: false
 ---
 At the moment, we support submission of tensorflow compute graphs only. We will offer submission of arbitrary docker images soon.
 

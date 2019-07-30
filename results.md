@@ -3,7 +3,7 @@ title: Results
 # subtitle: This is the demo site for Bulma Clean Theme
 layout: page
 show_sidebar: false
-hide_footer: true
+hide_footer: false
 ---
 
 <script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.2.7/dist/js/tabulator.min.js"></script>
