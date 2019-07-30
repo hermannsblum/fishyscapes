@@ -20,7 +20,7 @@ tf.saved_model.simple_save(
     outputs={'prediction': <semantic classification of the input image>,
              'anomaly_score': <anomaly score tensor>})
 ```
-The anomaly score tensor has the same dimensions as the input image and assigns for each pixel a `float32` score that is higher for higher probability of anomaly. You do not have to threshold anyhting as we will test the methods over all possible thresholds.
+The anomaly score tensor has the same height and width as the input image and assigns for each pixel a `float32` score that is higher for higher probability of anomaly. You do not have to threshold anything as we will test the methods over all possible thresholds.
 
 <article class="message is-warning">
   <div class="message-header">
