@@ -63,11 +63,28 @@ var table = new Tabulator("#results-table", {
         sorter:"number",
         sorterParams:{alignEmptyValues: 'bottom'},
         headerSortStartingDir:"desc"}]},
+    {//column group
+        title:"FS Lost & Found",
+        columns:[
+        {title:"AP",
+         field:"LaF_AP",
+         align:"right",
+         sorter:"number",
+         sorterParams:{alignEmptyValues: 'bottom'},
+         headerSortStartingDir:"desc"},
+        {title:fpr95,
+         field:"LaF_FPR@95%TPR",
+         align:"right",
+         sorter:"number",
+         sorterParams:{alignEmptyValues: 'bottom'},
+         headerSortStartingDir:"asc"},
+        ],
+    },
 	 	{//column group
         title:"FS Static",
         columns:[
         {title:"AP",
-         field:"static_average_precision",
+         field:"static_AP",
          align:"right",
          sorter:"number",
          sorterParams:{alignEmptyValues: 'bottom'},
@@ -84,7 +101,7 @@ var table = new Tabulator("#results-table", {
         title:"FS Web March 2019",
         columns:[
         {title:"AP",
-         field:"webmar19_average_precision",
+         field:"webmar19_AP",
          align:"right",
          sorter:"number",
          sorterParams:{alignEmptyValues: 'bottom'},
@@ -115,7 +132,7 @@ var table = new Tabulator("#results-table", {
         ],
     },
  	],
-  initialSort:[{column:"static_average_precision", dir:"desc"}],
+  initialSort:[{column:"LaF_AP", dir:"desc"}],
   groupToggleElement:false, //no toggeling
   groupHeader:function(value, count, data, group){
     //value - the value all members of this group share
@@ -125,7 +142,6 @@ var table = new Tabulator("#results-table", {
     var return_str = '<span class="method">' + value + '</span>';
     var found_paper = false;
     data.forEach(function(item) {
-      console.log()
       if (!found_paper && item.paper != 'x') {
         if (item.paper_link)
           return_str = return_str + '<a class="method method-paper" href="' + item.paper_link + '" target="_blank">' + item.paper + '</a>';
@@ -134,16 +150,12 @@ var table = new Tabulator("#results-table", {
         found_paper = true;
       }
     });
-    console.log(return_str);
     return return_str;
   },
 });
 
-console.log('start fetching');
 fetch('https://spreadsheets.google.com/feeds/cells/1fJy2tsru1Sza37IZGk3PqTGbpA_kTsE_QK5Ld2v65bc/1/public/full?alt=json').then(function(response) {
-  console.log('stop fetching');
   response.json().then(function(data) {
-    console.log('json ready');
     // read in lists of rows
     var rows = [];
     var rowData = [];
@@ -158,7 +170,6 @@ fetch('https://spreadsheets.google.com/feeds/cells/1fJy2tsru1Sza37IZGk3PqTGbpA_k
       rowData.push(val);
     }
     rows.push(rowData);
-    console.log('found all rows');
     // map to lists of dictionaries
     var tabledata = [];
     for(var r=1; r<rows.length; r++) {
@@ -166,7 +177,8 @@ fetch('https://spreadsheets.google.com/feeds/cells/1fJy2tsru1Sza37IZGk3PqTGbpA_k
       rows[0].forEach(function(key, i) {
         row[key] = rows[r][i];
       });
-      tabledata.push(row);
+      // filter out any row that has not defined a method name
+      if (row['method']) tabledata.push(row);
     }
     console.log(tabledata);
     table.setData(tabledata);
