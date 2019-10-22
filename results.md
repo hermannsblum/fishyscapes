@@ -131,6 +131,23 @@ var table = new Tabulator("#results-table", {
          headerSortStartingDir:"asc"},
         ],
     },
+    {//column group
+        title:"FS Web September 2019",
+        columns:[
+        {title:"AP",
+         field: "websept19_AP",
+         align:"right",
+         sorter:"number",
+         sorterParams:{alignEmptyValues: 'bottom'},
+         headerSortStartingDir:"desc"},
+        {title:fpr95,
+         field:"websept19_FPR@95%TPR",
+         align:"right",
+         sorter:"number",
+         sorterParams:{alignEmptyValues: 'bottom'},
+         headerSortStartingDir:"asc"},
+        ],
+    },
  	],
   initialSort:[{column:"LaF_AP", dir:"desc"}],
   groupToggleElement:false, //no toggeling
