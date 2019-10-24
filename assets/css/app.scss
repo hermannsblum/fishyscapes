@@ -30,3 +30,15 @@ a.method-paper:hover{
  text-decoration: underline;
  color: $white;
 }
+
+.column-group-left{
+    border-left: 1px solid $headerBorderColor !important;
+}
+
+.tabulator {
+    .tabulator-header {
+        .tabulator-col-group-cols {
+            margin-left: 1px;
+        }
+    }
+}
