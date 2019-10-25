@@ -30,3 +30,25 @@ def estimator(image):
 metrics = fs.evaluate(estimator, data.take(2))
 print('My method achieved {:.2f}% AP'.format(100 * metrics['AP']))
 ```
+
+# Attribution
+
+When using the Lost & Found dataset, please make sure you correctly attribute it to the original authors:
+```
+@inproceedings{pinggera2016lost,
+  title={Lost and found: detecting small road hazards for self-driving vehicles},
+  author={Pinggera, Peter and Ramos, Sebastian and Gehrig, Stefan and Franke, Uwe and Rother, Carsten and Mester, Rudolf},
+  booktitle={2016 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  year={2016}
+}
+```
+
+When using the segmentation masks, please also attribute these to the fishyscapes benchmark:
+```
+@article{blum2019fishyscapes,
+  title={The Fishyscapes Benchmark: Measuring Blind Spots in Semantic Segmentation},
+  author={Blum, Hermann and Sarlin, Paul-Edouard and Nieto, Juan and Siegwart, Roland and Cadena, Cesar},
+  journal={arXiv preprint arXiv:1904.03215},
+  year={2019}
+}
+```
