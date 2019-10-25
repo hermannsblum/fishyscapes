@@ -12,7 +12,7 @@ At the moment, we support submission of tensorflow compute graphs only. We will 
 # Submit a Tensorflow Graph
 Save your model following the [tensorflow guide](https://www.tensorflow.org/guide/saved_model) with the following specifications of its input and output:
 
-```
+```python
 tf.saved_model.simple_save(
     <session object>,
     <export path>,

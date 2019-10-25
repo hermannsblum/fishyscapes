@@ -24,6 +24,7 @@ url: "https://fishyscapes.com" # the base hostname & protocol for your site, e.g
 
 # Build settings
 markdown: kramdown
+highlighter: rouge
 remote_theme: chrisrhymes/bulma-clean-theme
 plugins:
   - jekyll-feed
