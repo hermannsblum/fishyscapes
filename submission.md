@@ -5,7 +5,7 @@ layout: page
 show_sidebar: false
 hide_footer: false
 ---
-At the moment, we support submission of tensorflow compute graphs only. We will offer submission of arbitrary docker images soon.
+To test methods on the dynamic datasets of the benchmark, we require submission of executables. These may be saved models, binaries, docker images or source code. Any submitted method should take an rgb image as input and produce semantic segmentation aswell as pixelwise uncertainty scores. See below for an example of submitting a tensorflow saved model.
 
 <a class="button is-primary" target="_blank" href="https://forms.gle/Rrc9nWuxsmks9CuX7">Submit your Model</a>
 
