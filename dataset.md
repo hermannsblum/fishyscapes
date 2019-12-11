@@ -12,14 +12,14 @@ pip install git+https://github.com/hermannsblum/bdl-benchmark.git
 
 The framework automatically downloads the data and makes it easy to test your method:
 
-<a class="button is-primary" target="_blank" href="https://github.com/hermannsblum/bdl-benchmark/blob/master/notebooks/fishyscapes.ipynb">See Notebook</a> <a class="button is-warning" target="_blank" href="https://colab.research.google.com/github/hermannsblum/bdl-benchmark/blob/master/notebooks/fishyscapes.ipynb">Run in Colab</a>
+<a class="button is-primary" target="_blank" href="https://github.com/hermannsblum/bdl-benchmark/blob/master/notebooks/fishyscapes.ipynb">Notebook Source</a> <a class="button is-warning" target="_blank" href="https://colab.research.google.com/github/hermannsblum/bdl-benchmark/blob/master/notebooks/fishyscapes.ipynb">Run in Colab</a>
 
 ```python
 import bdlb
 
 fs = bdlb.load(benchmark="fishyscapes")
 # automatically downloads the dataset
-data = fs.get_dataset()
+data = fs.get_dataset('LostAndFound')
 
 # test your method with the benchmark metrics
 def estimator(image):
@@ -30,6 +30,12 @@ def estimator(image):
 metrics = fs.evaluate(estimator, data.take(2))
 print('My method achieved {:.2f}% AP'.format(100 * metrics['AP']))
 ```
+
+# FS Web Validation Data
+
+The FS Web Dataset is regularly changing to model an open world setting. We make validation data available that is generated with the same image blending mechanisms, but instead of using dynaimc data from the web it uses objects from PASCAL VOC (see [paper](https://arxiv.org/pdf/1904.03215.pdf) for details). The dataset is intended to illustrate blending changes as the dataset evolves and enable contributors to test their methods on a dataset that is closer to the FS Web data.
+
+<a class="button is-primary" target="_blank" href="https://github.com/hermannsblum/bdl-benchmark/blob/master/notebooks/fishyscapes web validation data.ipynb">Notebook Source</a> <a class="button is-warning" target="_blank" href="https://colab.research.google.com/github/hermannsblum/bdl-benchmark/blob/master/notebooks/fishyscapes web validation data.ipynb">Run in Colab</a>
 
 # Attribution
 
