@@ -1,7 +1,5 @@
 from sacred.observers import MongoObserver, FileStorageObserver
-from xview.datasets import get_dataset
-from xview.models import get_model
-import xview.settings as settings
+import fs.settings as settings
 import os
 import shutil
 from logging import getLogger, info

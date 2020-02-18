@@ -5,9 +5,13 @@ import os
 import sys
 import logging
 from zipfile import ZipFile
+import tensorflow as tf
+import bdlb
 
 from .utils import ExperimentData
 from fs.data.fsdata import FSData
+from fs.data.utils import load_gdrive_file
+from fs.data.augmentation import crop_multiple
 
 ex = Experiment()
 ex.capture_out_filter = apply_backspaces_and_linefeeds
@@ -15,13 +19,33 @@ ex.observers.append(get_observer())
 
 @ex.command
 def saved_model(testing_dataset, model_id, _run, _log):
-    data = FSData(**testing_dataset).get_testset()
+    fsdata = FSData(**testing_dataset)
 
-    def translate_data_format(blob):
-        blob['image_left'] = blob.get('rgb', blob['image_left'])
-        return blob
+    # Hacks because tf.data is shit and we need to translate the dict keys
+    def data_generator():
+        for item in fsdata.testset:
+            data = fsdata._get_data(training_format=False, **item)
+            out = {}
+            for m in fsdata.modalities:
+                blob = crop_multiple(data[m])
+                if m == 'rgb':
+                    m = 'image_left'
+                if 'mask' not in fsdata.modalities and m == 'labels':
+                    m = 'mask'
+                out[m] = blob
+            yield out
 
-    data.map(translate_data_format)
+    data_types = {}
+    for key, item in fsdata.get_data_description()[0].items():
+        if key == 'rgb':
+            key = 'image_left'
+        if 'mask' not in fsdata.modalities and key == 'labels':
+            key = 'mask'
+        data_types[key] = item
+
+    data = tf.data.Dataset.from_generator(data_generator,
+                                             data_types)
+    print(data.element_spec)
 
     ZipFile(load_gdrive_file(model_id, 'zip')).extractall('/tmp/extracted_module')
     tf.compat.v1.enable_resource_variables()

@@ -2,7 +2,7 @@ from pandas import Series
 from pymongo import MongoClient
 from gridfs import GridFS
 from tensorflow.python.summary.summary_iterator import summary_iterator
-import xview.settings as settings
+import fs.settings as settings
 from bson.json_util import dumps
 import json
 import zipfile
