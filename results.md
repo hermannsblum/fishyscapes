@@ -82,6 +82,24 @@ var table = new Tabulator("#results-table", {
         ],
     },
     {//column group
+        title:"FS Web Jan. 2020",
+        columns:[
+        {title:"AP",
+         field: "webjan20_AP",
+         align:"right",
+         cssClass:"column-group-left",
+         sorter:"number",
+         sorterParams:{alignEmptyValues: 'bottom'},
+         headerSortStartingDir:"desc"},
+        {title:fpr95,
+         field:"webjan20_FPR@95%TPR",
+         align:"right",
+         sorter:"number",
+         sorterParams:{alignEmptyValues: 'bottom'},
+         headerSortStartingDir:"asc"},
+        ],
+    },
+    {//column group
         title:"FS Web Sept. 2019",
         columns:[
         {title:"AP",
@@ -178,31 +196,33 @@ var table = new Tabulator("#results-table", {
 
 fetch('https://spreadsheets.google.com/feeds/cells/1fJy2tsru1Sza37IZGk3PqTGbpA_kTsE_QK5Ld2v65bc/1/public/full?alt=json').then(function(response) {
   response.json().then(function(data) {
-    // read in lists of rows
-    var rows = [];
-    var rowData = [];
+    // first row gives keys
+    columnKeys = []
     for(var r=0; r<data.feed.entry.length; r++) {
       var cell = data.feed.entry[r]["gs$cell"];
       var val = cell["$t"];
-      if (val.endsWith('%')) val = parseFloat(val.slice(0, -1));
-      if (cell.col == 1) {
-        if (cell.row != 1) rows.push(rowData);
-        rowData = [];
-      }
-      rowData.push(val);
+      if (Number(cell.row) !== 1) break;
+      columnKeys.push(val);
     }
-    rows.push(rowData);
-    // map to lists of dictionaries
+    // read in lists of rows
     var tabledata = [];
-    for(var r=1; r<rows.length; r++) {
-      var row = {};
-      rows[0].forEach(function(key, i) {
-        row[key] = rows[r][i];
-      });
-      // filter out any row that has not defined a method name
-      if (row['method']) tabledata.push(row);
+    var currentEntry = {};
+    var currentRow = 2
+    for(var r=0; r<data.feed.entry.length; r++) {
+      var cell = data.feed.entry[r]["gs$cell"];
+      var val = cell["$t"];
+      var row = Number(cell['row']);
+      var col = Number(cell['col']);
+      if (val.endsWith('%')) val = parseFloat(val.slice(0, -1));
+      if (row > currentRow) {
+        // filter out any row that has not defined a method name
+        if (currentEntry['method']) tabledata.push(currentEntry);
+        currentEntry = {};
+        currentRow = row;
+      }
+      currentEntry[columnKeys[col - 1]] = val;
     }
-    console.log(tabledata);
+    if (currentEntry['method']) tabledata.push(currentEntry);
     table.setData(tabledata);
   });
 });

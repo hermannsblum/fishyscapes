@@ -7,5 +7,6 @@ $tabs-link-active-color: $primary;
 $tabs-link-active-border-bottom-color: $primary;
 
 @import "../node_modules/bulma/bulma.sass";
+$hero-darken: $dark !default;
 @import "layout";
 @import "syntax"
