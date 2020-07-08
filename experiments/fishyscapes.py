@@ -18,12 +18,13 @@ ex.capture_out_filter = apply_backspaces_and_linefeeds
 ex.observers.append(get_observer())
 
 @ex.command
-def saved_model(testing_dataset, model_id, _run, _log):
+def saved_model(testing_dataset, model_id, _run, _log, batching=False, validation=False):
     fsdata = FSData(**testing_dataset)
 
     # Hacks because tf.data is shit and we need to translate the dict keys
     def data_generator():
-        for item in fsdata.testset:
+        dataset = fsdata.validation_set if validation else fsdata.testset
+        for item in dataset:
             data = fsdata._get_data(training_format=False, **item)
             out = {}
             for m in fsdata.modalities:
@@ -43,16 +44,18 @@ def saved_model(testing_dataset, model_id, _run, _log):
             key = 'mask'
         data_types[key] = item
 
-    data = tf.data.Dataset.from_generator(data_generator,
-                                             data_types)
-    print(data.element_spec)
+    data = tf.data.Dataset.from_generator(data_generator, data_types)
 
     ZipFile(load_gdrive_file(model_id, 'zip')).extractall('/tmp/extracted_module')
     tf.compat.v1.enable_resource_variables()
     net = tf.saved_model.load('/tmp/extracted_module')
 
     def eval_func(image):
+        if batching:
+            image = tf.expand_dims(image, 0)
         out = net.signatures['serving_default'](tf.cast(image, tf.float32))
+        for key, val in out.items():
+            print(key, val.shape, flush=True)
         return out['anomaly_score']
 
     fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
