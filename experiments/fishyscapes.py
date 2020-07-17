@@ -96,9 +96,9 @@ def resynthesis_model(testing_dataset, _run, _log, ours=True,  validation=False)
     fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
     
     if ours:
-        model_id = 'synthesis_boosting'
+        model_id = 'SynBoost'
     else:
-        model_id = 'resynthesis'
+        model_id = 'Resynthesis'
         
     _run.info['{}_anomaly'.format(model_id)] = fs.evaluate(detector.estimator, data)
     
