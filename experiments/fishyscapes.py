@@ -13,9 +13,6 @@ from fs.data.fsdata import FSData
 from fs.data.utils import load_gdrive_file
 from fs.data.augmentation import crop_multiple
 
-sys.path.insert(0, os.path.join(os.getcwd(), os.path.dirname(os.path.dirname(__file__)), 'driving_uncertainty'))
-from test_fishy_torch import AnomalyDetector
-
 ex = Experiment()
 ex.capture_out_filter = apply_backspaces_and_linefeeds
 ex.observers.append(get_observer())
@@ -68,6 +65,10 @@ def saved_model(testing_dataset, model_id, _run, _log, batching=False, validatio
 
 @ex.command
 def resynthesis_model(testing_dataset, _run, _log, ours=True, validation=False):
+    # added import inside the function to prevent conflicts if this method is not being tested
+    sys.path.insert(0, os.path.join(os.getcwd(), os.path.dirname(os.path.dirname(__file__)), 'driving_uncertainty'))
+    from test_fishy_torch import AnomalyDetector
+    
     fsdata = FSData(**testing_dataset)
     
     # Hacks because tf.data is shit and we need to translate the dict keys
