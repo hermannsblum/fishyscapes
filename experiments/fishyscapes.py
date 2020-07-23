@@ -67,7 +67,8 @@ def saved_model(testing_dataset, model_id, _run, _log, batching=False, validatio
 def resynthesis_model(testing_dataset, _run, _log, ours=True, validation=False):
     # added import inside the function to prevent conflicts if this method is not being tested
     sys.path.insert(0, os.path.join(os.getcwd(), os.path.dirname(os.path.dirname(__file__)), 'driving_uncertainty'))
-    from test_fishy_torch import AnomalyDetector
+    from driving_uncertainty.test_fishy_torch import AnomalyDetector
+    detector = AnomalyDetector(ours=ours)
     
     fsdata = FSData(**testing_dataset)
     
@@ -96,16 +97,19 @@ def resynthesis_model(testing_dataset, _run, _log, ours=True, validation=False):
     
     data = tf.data.Dataset.from_generator(data_generator, data_types)
     
-    detector = AnomalyDetector(ours=ours)
-    
     fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
     
     if ours:
         model_id = 'SynBoost'
     else:
         model_id = 'Resynthesis'
+
+    def wrapper(image):
+        image = image.numpy().astype('uint8')
+        ret = detector.estimator_worker(image)
+        return ret
     
-    _run.info['{}_anomaly'.format(model_id)] = fs.evaluate(detector.estimator, data)
+    _run.info['{}_anomaly'.format(model_id)] = fs.evaluate(wrapper, data)
 
 
 if __name__ == '__main__':
