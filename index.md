@@ -4,6 +4,7 @@ subtitle: Anomaly Detection for Semantic Segmentation
 layout: page
 callouts:
   - image_callout
+  - data_overview_callout
   - subscribe_callout
 show_sidebar: false
 hide_footer: false
