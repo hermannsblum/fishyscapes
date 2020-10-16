@@ -3,6 +3,7 @@ import numpy as np
 from os import path
 import cv2
 import json
+import gdown
 from copy import copy
 
 
@@ -101,3 +102,14 @@ def dump_dataset(dataset, directory: str, only_modalities=None, num_classes=None
         info['num_classes'] = num_classes
     with open(path.join(directory, 'dataset_info.json'), 'w') as f:
         json.dump(info, f)
+
+
+def load_gdrive_file(file_id, ending=''):
+    """Downloads files from google drive, caches files that are already downloaded."""
+    filename = '{}.{}'.format(file_id, ending) if ending else file_id
+    filename = path.join(path.expanduser('~/.keras/datasets'), filename)
+    if not path.exists(filename):
+        gdown.download('https://drive.google.com/uc?id={}'.format(file_id),
+                       filename,
+                       quiet=False)
+    return filename
