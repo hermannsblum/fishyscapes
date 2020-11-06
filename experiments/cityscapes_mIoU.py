@@ -39,7 +39,7 @@ def saved_model(testing_dataset, model_id, _run, _log):
     net = tf.saved_model.load('/tmp/extracted_module')
 
     m = tf.keras.metrics.MeanIoU(num_classes=19)
-    for batch in tqdm(data.batch(1), ascii=True):
+    for batch in tqdm(data, ascii=True):
         pred = net.signatures['serving_default'](tf.cast(batch['image_left'], tf.float32))
         labels = tf.reshape(batch['segmentation_label'], [-1])
         weights = tf.where(labels == -1, 0, 1)
