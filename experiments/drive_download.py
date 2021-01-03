@@ -6,7 +6,7 @@ from fs.data.utils import load_gdrive_file
 ex = Experiment()
 
 @ex.main
-def download(testing_dataset, model_id):
+def download(testing_dataset, batching, model_id):
     load_gdrive_file(model_id, 'zip')
 
 if __name__ == '__main__':
