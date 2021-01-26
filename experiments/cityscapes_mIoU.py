@@ -19,7 +19,7 @@ ex.capture_out_filter = apply_backspaces_and_linefeeds
 ex.observers.append(get_observer())
 
 @ex.command
-def saved_model(testing_dataset, model_id, _run, _log):
+def saved_model(testing_dataset, model_id, _run, _log, batching=True):
     # testing_dataset is not used, but useful to keep config file consistent with other
     # tests
     data = tfds.load(name='cityscapes', split='validation',
@@ -33,6 +33,8 @@ def saved_model(testing_dataset, model_id, _run, _log):
             tf.cast(batch['segmentation_label'], tf.int32))
         return batch
     data = data.map(label_lookup_map)
+    if batching:
+        data = data.batch(1)
 
     ZipFile(load_gdrive_file(model_id, 'zip')).extractall('/tmp/extracted_module')
     tf.compat.v1.enable_resource_variables()
