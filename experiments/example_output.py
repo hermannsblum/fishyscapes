@@ -43,6 +43,11 @@ def saved_model(image_path,
     if batching:
         out = out[0]
 
+    if scale == 'exp':
+        out = np.exp(out)
+    elif scale == 'log':
+        out = np.log(out)
+
     min_val, max_val = out.min(), out.max()
     disp = (out - min_val) / (max_val - min_val)
     disp = 255 - (np.clip(disp, 0, 1) * 255).astype('uint8')
