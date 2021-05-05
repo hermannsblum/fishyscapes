@@ -112,7 +112,6 @@ def entropy_maximization(testing_dataset, _run, _log, validation=False):
             return anomaly_score
 
 
-    fs = bdlb.load(benchmark="fishyscapes")
     get_anomaly_score = ForwardPass().compute_entropy
 
     _run.info['entropy_max_anomaly'] = fs.evaluate(get_anomaly_score, data)
