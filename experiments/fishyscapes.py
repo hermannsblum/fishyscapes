@@ -153,7 +153,7 @@ def ood_segmentation(testing_dataset, _run, _log, ours=True, validation=False):
         main_out, anomaly_score = ood_detector(image, preprocess=True)
         return anomaly_score
 
-    _run.info['awesomemango_anomaly'] = fs.evaluate(wrapper, data)
+    _run.info['awesomemango_anomaly2'] = fs.evaluate(wrapper, data)
 
 
 if __name__ == '__main__':
