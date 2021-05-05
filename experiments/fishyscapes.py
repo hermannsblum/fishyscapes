@@ -1,6 +1,6 @@
 from sacred import Experiment
 from sacred.utils import apply_backspaces_and_linefeeds
-from .common import get_observer, experiment_context, clear_directory, load_data
+from experiments.common import get_observer, experiment_context, clear_directory, load_data
 import os
 import sys
 import logging
@@ -8,7 +8,7 @@ from zipfile import ZipFile
 import tensorflow as tf
 import bdlb
 
-from .utils import ExperimentData
+from experiments.utils import ExperimentData
 from fs.data.fsdata import FSData
 from fs.data.utils import load_gdrive_file
 from fs.data.augmentation import crop_multiple
