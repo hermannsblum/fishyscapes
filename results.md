@@ -82,6 +82,24 @@ var table = new Tabulator("#results-table", {
         ],
     },
     {//column group
+        title:"FS Web April 2021",
+        columns:[
+        {title:"AP",
+         field: "webapr21_AP",
+         align:"right",
+         cssClass:"column-group-left",
+         sorter:"number",
+         sorterParams:{alignEmptyValues: 'bottom'},
+         headerSortStartingDir:"desc"},
+        {title:fpr95,
+         field:"webapr21_FPR@95%TPR",
+         align:"right",
+         sorter:"number",
+         sorterParams:{alignEmptyValues: 'bottom'},
+         headerSortStartingDir:"asc"},
+        ],
+    },
+    {//column group
         title:"FS Web Oct. 2020",
         columns:[
         {title:"AP",
