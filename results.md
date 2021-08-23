@@ -230,35 +230,23 @@ var table = new Tabulator("#results-table", {
   },
 });
 
-fetch('https://spreadsheets.google.com/feeds/cells/1fJy2tsru1Sza37IZGk3PqTGbpA_kTsE_QK5Ld2v65bc/1/public/full?alt=json').then(function(response) {
+fetch('https://sheets.googleapis.com/v4/spreadsheets/1fJy2tsru1Sza37IZGk3PqTGbpA_kTsE_QK5Ld2v65bc/values/Sheet1?alt=json&key=AIzaSyCIN71ETlQNIF460oLLaZAmTI8OdaiSVqc').then(function(response) {
   response.json().then(function(data) {
     // first row gives keys
-    columnKeys = []
-    for(var r=0; r<data.feed.entry.length; r++) {
-      var cell = data.feed.entry[r]["gs$cell"];
-      var val = cell["$t"];
-      if (Number(cell.row) !== 1) break;
-      columnKeys.push(val);
-    }
+    columnKeys = data.values[0];
     // read in lists of rows
     var tabledata = [];
     var currentEntry = {};
-    var currentRow = 2
-    for(var r=0; r<data.feed.entry.length; r++) {
-      var cell = data.feed.entry[r]["gs$cell"];
-      var val = cell["$t"];
-      var row = Number(cell['row']);
-      var col = Number(cell['col']);
-      if (val.endsWith('%')) val = parseFloat(val.slice(0, -1));
-      if (row > currentRow) {
-        // filter out any row that has not defined a method name
-        if (currentEntry['method']) tabledata.push(currentEntry);
-        currentEntry = {};
-        currentRow = row;
+    for(var r=1; r<data.values.length; r++) {
+      for(var i=0; i<data.values[r].length; i++) {
+        var val = data.values[r][i];
+        if (val.endsWith('%')) val = parseFloat(val.slice(0, -1));
+        currentEntry[columnKeys[i]] = val;
       }
-      currentEntry[columnKeys[col - 1]] = val;
+      // filter out any row that has not defined a method name
+      if (currentEntry['method']) tabledata.push(currentEntry);
+      currentEntry = {};
     }
-    if (currentEntry['method']) tabledata.push(currentEntry);
     table.setData(tabledata);
   });
 });
