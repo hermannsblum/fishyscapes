@@ -12,6 +12,7 @@ from experiments.utils import ExperimentData
 from fs.data.fsdata import FSData
 from fs.data.utils import load_gdrive_file
 from fs.data.augmentation import crop_multiple
+from fs.settings import TMP_DIR
 
 ex = Experiment()
 ex.capture_out_filter = apply_backspaces_and_linefeeds
@@ -47,16 +48,17 @@ def saved_model(testing_dataset, model_id, _run, _log, batching=False, validatio
 
     data = tf.data.Dataset.from_generator(data_generator, data_types)
 
-    ZipFile(load_gdrive_file(model_id, 'zip')).extractall('/tmp/extracted_module')
+    extractpath = os.path.join(TMP_DIR, 'extracted_module')
+    ZipFile(load_gdrive_file(model_id, 'zip')).extractall(extractpath)
     tf.compat.v1.enable_resource_variables()
-    net = tf.saved_model.load('/tmp/extracted_module')
+    net = tf.saved_model.load(extractpath)
 
     def eval_func(image):
         if batching:
             image = tf.expand_dims(image, 0)
         out = net.signatures['serving_default'](tf.cast(image, tf.float32))
-        for key, val in out.items():
-            print(key, val.shape, flush=True)
+        # for key, val in out.items():
+            # print(key, val.shape, flush=True)
         return out['anomaly_score']
 
     fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
