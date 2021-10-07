@@ -22,6 +22,28 @@ ex.observers.append(get_observer())
 
 
 @ex.command
+def real_time_sigmoid(testing_dataset, _run, _log, validation=False):
+    from network.real_time_sigmoid import Real_Time_Sigmoid
+    rts = Real_Time_Sigmoid()
+
+    data = tfds.load(name='cityscapes', split='validation',
+                     data_dir='/cluster/work/riner/users/blumh/tensorflow_datasets')
+
+    def eval_func(image):
+        return rts.eval(image)
+
+    m = tf.keras.metrics.Mean()
+    for batch in tqdm(data, ascii=True):
+        image = batch['image_left'].numpy().astype('uint8')
+        start = time.time()
+        eval_func(image).numpy()
+        end = time.time()
+        m.update_state(end - start)
+
+    _run.info['real_time_sigmoid_anomaly'] = m.result().numpy()
+
+
+@ex.command
 def saved_model(testing_dataset, model_id, _run, _log, batching=False, validation=False):
     data = tfds.load(name='cityscapes', split='validation',
                      data_dir='/cluster/work/riner/users/blumh/tensorflow_datasets')

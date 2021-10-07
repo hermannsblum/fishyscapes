@@ -17,6 +17,50 @@ ex = Experiment()
 ex.capture_out_filter = apply_backspaces_and_linefeeds
 ex.observers.append(get_observer())
 
+@ex.command
+def real_time_sigmoid(testing_dataset, _run, _log, validation=False):
+    # BELOW, IMPORT ANY OF YOUR NETWORK CODE
+    from network.real_time_sigmoid import Real_Time_Sigmoid
+    rts = Real_Time_Sigmoid()
+
+    fsdata = FSData(**testing_dataset)
+
+    # BELOW CODE IS NECESSARY FROM US
+    # Hacks because tf.data is shit and we need to translate the dict keys
+    def data_generator():
+        dataset = fsdata.validation_set if validation else fsdata.testset
+        for item in dataset:
+            data = fsdata._get_data(training_format=False, **item)
+            out = {}
+            for m in fsdata.modalities:
+                blob = crop_multiple(data[m])
+                if m == 'rgb':
+                    m = 'image_left'
+                if 'mask' not in fsdata.modalities and m == 'labels':
+                    m = 'mask'
+                out[m] = blob
+            yield out
+
+    data_types = {}
+    for key, item in fsdata.get_data_description()[0].items():
+        if key == 'rgb':
+            key = 'image_left'
+        if 'mask' not in fsdata.modalities and key == 'labels':
+            key = 'mask'
+        data_types[key] = item
+
+    data = tf.data.Dataset.from_generator(data_generator, data_types)
+
+    fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
+
+    # FILL IN THE WRAPPER FUNCTION TO DO A SINGLE-FRAME PREDICTION
+    def wrapper(image):
+        image = image.numpy().astype('uint8')
+        anomaly_score = rts.eval(image)
+
+        return anomaly_score
+
+    _run.info['real_time_sigmoid_anomaly'] = fs.evaluate(wrapper, data)
 
 @ex.command
 def saved_model(testing_dataset, model_id, _run, _log, batching=False, validation=False):
