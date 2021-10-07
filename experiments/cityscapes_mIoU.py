@@ -1,6 +1,6 @@
 from sacred import Experiment
 from sacred.utils import apply_backspaces_and_linefeeds
-from .common import get_observer, experiment_context, clear_directory, load_data
+from experiments.common import get_observer, experiment_context, clear_directory, load_data
 import os
 import sys
 import logging
@@ -10,7 +10,7 @@ import bdlb
 from tqdm import tqdm
 import tensorflow_datasets as tfds
 
-from .utils import ExperimentData
+from experiments.utils import ExperimentData
 from fs.data.utils import load_gdrive_file
 from fs.data.augmentation import crop_multiple
 
@@ -19,7 +19,7 @@ ex.capture_out_filter = apply_backspaces_and_linefeeds
 ex.observers.append(get_observer())
 
 @ex.command
-def saved_model(testing_dataset, model_id, _run, _log, batching=True):
+def saved_model(testing_dataset, model_id, _run, _log, batching=False):
     # testing_dataset is not used, but useful to keep config file consistent with other
     # tests
     data = tfds.load(name='cityscapes', split='validation',
