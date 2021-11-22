@@ -247,7 +247,47 @@ def ood_segmentation(testing_dataset, _run, _log, ours=True, validation=False):
 
     _run.info['awesomemango_anomaly2'] = fs.evaluate(wrapper, data)
 
+@ex.command
+def leek_anomaly(testing_dataset, _run, _log, batching=False, validation=False):
+    # added import inside the function to prevent conflicts if this method is not being tested
+    sys.path.insert(0, os.path.join(os.getcwd(), os.path.dirname(os.path.dirname(__file__)), 'leek_anomaly'))
+    from leek_anomaly import network_wrapper
+    
+    fsdata = FSData(**testing_dataset)
+    
+    # Hacks because tf.data is shit and we need to translate the dict keys
+    def data_generator():
+        dataset = fsdata.validation_set if validation else fsdata.testset
+        for item in dataset:
+            data = fsdata._get_data(training_format=False, **item)
+            out = {}
+            for m in fsdata.modalities:
+                blob = crop_multiple(data[m])
+                if m == 'rgb':
+                    m = 'image_left'
+                if 'mask' not in fsdata.modalities and m == 'labels':
+                    m = 'mask'
+                out[m] = blob
+            yield out
 
+    data_types = {}
+    for key, item in fsdata.get_data_description()[0].items():
+        if key == 'rgb':
+            key = 'image_left'
+        if 'mask' not in fsdata.modalities and key == 'labels':
+            key = 'mask'
+        data_types[key] = item
+
+    data = tf.data.Dataset.from_generator(data_generator, data_types)
+
+    def wrapper(image):
+        image = image.numpy().astype('uint8')
+        anomaly_score = network_wrapper.estimator(image)
+        return anomaly_score
+
+    fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
+    _run.info['leek_anomaly'] = fs.evaluate(wrapper, data)
+    
 if __name__ == '__main__':
     ex.run_commandline()
     os._exit(os.EX_OK)
