@@ -1,3 +1,5 @@
+import tensorflow as tf
+tf.config.set_visible_devices([], 'GPU')
 from sacred import Experiment
 from sacred.utils import apply_backspaces_and_linefeeds
 from experiments.common import get_observer, experiment_context, clear_directory, load_data
@@ -5,7 +7,6 @@ import os
 import sys
 import logging
 from zipfile import ZipFile
-import tensorflow as tf
 import bdlb
 import torch
 from experiments.utils import ExperimentData
@@ -17,7 +18,6 @@ from fs.settings import TMP_DIR
 ex = Experiment()
 ex.capture_out_filter = apply_backspaces_and_linefeeds
 ex.observers.append(get_observer())
-
 
 @ex.command
 def saved_model(testing_dataset, model_id, _run, _log, batching=False, validation=False):
@@ -247,12 +247,13 @@ def ood_segmentation(testing_dataset, _run, _log, ours=True, validation=False):
 
     _run.info['awesomemango_anomaly2'] = fs.evaluate(wrapper, data)
 
-
 @ex.command
 def anomaly_segmentation(testing_dataset, _run, _log, validation=False):
     # added import inside the function to prevent conflicts if this method is not being tested
 
-    from test import get_anomaly_detector
+    from yutian_segment.test import get_anomaly_detector
+    import numpy as np
+    import torch
 
     anomaly_segmentor = get_anomaly_detector(num_classes=20)
     anomaly_segmentor.cuda()
@@ -286,12 +287,41 @@ def anomaly_segmentation(testing_dataset, _run, _log, validation=False):
 
     fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
 
-    def wrapper(image):
-        image = torch.from_numpy(image).cuda()
-        anomaly_score = anomaly_segmentor(image, output_anomaly=True)
-        return anomaly_score
+    def normalize(img, mean, std):
+      # pytorch pretrained model need the input range: 0-1
+      if np.amax(img) > 1:
+          img = img.astype(np.float32) / 255.0
+      img = img - mean
+      img = img / std
 
-    _run.info['anomaly segmentation'] = fs.evaluate(wrapper, data)
+      return img
+
+    def process_image(img):
+      p_img = img
+
+      if img.shape[2] < 3:
+        im_b = p_img
+        im_g = p_img
+        im_r = p_img
+        p_img = np.concatenate((im_b, im_g, im_r), axis=2)
+
+      image_mean = np.array([0.485, 0.456, 0.406])
+      image_std = np.array([0.229, 0.224, 0.225])
+      p_img = normalize(p_img, image_mean, image_std)
+
+      p_img = p_img.transpose(2, 0, 1)
+
+      return p_img
+
+    def wrapper(image):
+        image = image.numpy()
+        # expects image channels in 2nd dimension
+        image = process_image(image)  # normlise the image and transpose
+        image = torch.from_numpy(image).cuda().type(torch.FloatTensor)
+        anomaly_score = anomaly_segmentor(image, output_anomaly=True)
+        return anomaly_score.cpu().detach()
+
+    _run.info['yutian_rev5'] = fs.evaluate(wrapper, data)
 
 if __name__ == '__main__':
     ex.run_commandline()
