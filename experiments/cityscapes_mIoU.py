@@ -73,8 +73,8 @@ def leek_anomaly(_run, _log):
         return data_transforms
     val_data_transform = val_data_transforms()
 
-    data = tfds.load(name='cityscapes', split='validation')
-                     #data_dir='/cluster/work/riner/users/blumh/tensorflow_datasets')
+    data = tfds.load(name='cityscapes', split='validation',
+                     data_dir='/cluster/work/riner/users/blumh/tensorflow_datasets')
 
     label_lookup = tf.constant(
         [-1, -1, -1, -1, -1, -1, -1, 0, 1, -1, -1, 2, 3, 4, -1, -1, -1, 5, -1, 6, 7, 8, 9,
