@@ -78,6 +78,28 @@ def resynthesis_model(_run, _log, ours=True, validation=False):
     _run.info['{}_anomaly'.format(model_id)] = m.result().numpy()
 
 
+@ex.command
+def leek_anomaly(_run, _log, validation=False):
+    # added import inside the function to prevent conflicts if this method is not being tested
+    sys.path.insert(0, os.path.join(os.getcwd(), os.path.dirname(os.path.dirname(__file__)), 'leek_anomaly'))
+    from leek_anomaly import network_wrapper
+    
+    data = tfds.load(name='cityscapes', split='validation',
+                     data_dir='/cluster/work/riner/users/blumh/tensorflow_datasets')
+
+    def eval_func(image):
+        return network_wrapper.estimator(image)
+
+    m = tf.keras.metrics.Mean()
+    for batch in tqdm(data, ascii=True):
+        image = batch['image_left'].numpy().astype('uint8')
+        start = time.time()
+        eval_func(image).numpy()
+        end = time.time()
+        m.update_state(end - start)
+
+    _run.info['leek_anomaly'] = m.result().numpy()
+    
 if __name__ == '__main__':
     ex.run_commandline()
     os._exit(os.EX_OK)
