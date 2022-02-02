@@ -26,3 +26,21 @@ The Fishyscapes Benchmark compares research approaches towards detecting anomali
 </div>
 # Anomaly Detection for Semantic Segmentation
 Anomaly detection and uncertainty estimation from deep learning models is subject of active research. However, fundamental ML research is often evaluated on MNIST, CIFAR and similar datasets. In the Fishyscapes Benchmark, we test how such methods transfer onto the much more complex task of semantic segmentation.
+
+# Team
+To process your submissions, our team is dedicated to help you get the methods running on our cluster. Please contact us in case of any questions.
+
+<div class="columns">
+<div class="column has-text-centered">
+<img width="150px" src="{{ "/assets/img/boyang.jpg" | relative_url }}" />
+<p>Sun Boyang</p>
+</div>
+<div class="column has-text-centered">
+<img width="150px" src="{{ "/assets/img/jiaxu.jpg" | relative_url }}" />
+<p>Xing Jiaxu</p>
+</div>
+<div class="column has-text-centered">
+<img width="150px" src="{{ "/assets/img/hermann.jpg" | relative_url }}" />
+<p>Hermann Blum</p>
+</div>
+</div>
