@@ -2,6 +2,7 @@ from sacred import Experiment
 from sacred.utils import apply_backspaces_and_linefeeds
 from experiments.common import get_observer, experiment_context, clear_directory, load_data
 import os
+import torch
 import sys
 import logging
 from zipfile import ZipFile
@@ -254,7 +255,7 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
     from deeplabv3 import DeepWV3PlusTH
 
     model = DeepWV3PlusTH(num_classes=19).cuda()
-    model.load_state_dict('dlv3+th_model.pth')
+    model.load_state_dict(torch.load('experiments/model_7.pth'))
     model.eval()
 
     fsdata = FSData(**testing_dataset)
@@ -301,7 +302,7 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
         probs = probs[0].numpy()
         return probs
 
-    _run.info['ood_ratio'] = fs.evaluate(wrapper, data)
+    _run.info['ood_ratio_rev1'] = fs.evaluate(wrapper, data)
 
 
 if __name__ == '__main__':
