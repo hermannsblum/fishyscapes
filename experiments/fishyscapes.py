@@ -254,7 +254,7 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
     from deeplabv3 import DeepWV3PlusTH
 
     model = DeepWV3PlusTH(num_classes=19).cuda()
-    model.load_state_dict('dlv3+th_model.pth')
+    # model.load_state_dict('dlv3+th_model.pth')
     model.eval()
 
     fsdata = FSData(**testing_dataset)
@@ -292,13 +292,14 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
         image = image.numpy().astype('uint8')
         with torch.no_grad():
             img = torch.from_numpy(image).float().unsqueeze(0) / 255.
-            # img should be in [0, 1]
-            logit, logit_ood = model(img.cuda())
+            # img should be in [0, 1] and of shape 1x3xHxW
+            logit, logit_ood = model(img.cuda().unsqueeze(0))
         out = torch.nn.functional.softmax(logit_ood, dim=1)
         p1 = torch.logsumexp(logit / self.temperature, dim=1) # ln hat_p(x|din)
         p2 = out[:, 1]  # p(~din|x)
         probs = (- p1) + p2.log() # - ln hat_p(x|din) + ln p(~din|x)
         probs = probs[0].numpy()
+        # output is HxW
         return probs
 
     _run.info['ood_ratio'] = fs.evaluate(wrapper, data)
