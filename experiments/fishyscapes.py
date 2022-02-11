@@ -296,7 +296,7 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
             # img should be in [0, 1] and of shape 1x3xHxW
             logit, logit_ood = model(img.cuda())
         out = torch.nn.functional.softmax(logit_ood, dim=1)
-        p1 = torch.logsumexp(logit / self.temperature, dim=1) # ln hat_p(x|din)
+        p1 = torch.logsumexp(logit, dim=1) # ln hat_p(x|din)
         p2 = out[:, 1]  # p(~din|x)
         probs = (- p1) + p2.log() # - ln hat_p(x|din) + ln p(~din|x)
         probs = probs[0].numpy()
