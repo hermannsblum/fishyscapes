@@ -292,7 +292,7 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
     def wrapper(image):
         image = image.numpy().astype('uint8')
         with torch.no_grad():
-            img = torch.from_numpy(image).float().unsqueeze(0) / 255.
+            img = torch.from_numpy(image).float().permute(0, 3, 1, 2) / 255.
             # img should be in [0, 1] and of shape 1x3xHxW
             logit, logit_ood = model(img.cuda().unsqueeze(0))
         out = torch.nn.functional.softmax(logit_ood, dim=1)
