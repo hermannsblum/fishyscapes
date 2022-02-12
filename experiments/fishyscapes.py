@@ -299,7 +299,7 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
         p1 = torch.logsumexp(logit, dim=1) # ln hat_p(x|din)
         p2 = out[:, 1]  # p(~din|x)
         probs = (- p1) + p2.log() # - ln hat_p(x|din) + ln p(~din|x)
-        probs = probs[0].numpy()
+        probs = probs[0].cpu()
         # output is HxW
         return probs
 
