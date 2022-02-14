@@ -254,7 +254,7 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
     # BELOW, IMPORT ANY OF YOUR NETWORK CODE
     from deeplabv3 import DeepWV3PlusTH
 
-    model = DeepWV3PlusTH(num_classes=19).cuda()
+    model = DeepWV3PlusTH(num_classes=19).cuda().half()
     model.load_state_dict(torch.load('experiments/model_7.pth'))
     model.eval()
 
@@ -294,7 +294,7 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
         with torch.no_grad():
             img = torch.from_numpy(image).float().unsqueeze(0).permute(0, 3, 1, 2) / 255.
             # img should be in [0, 1] and of shape 1x3xHxW
-            logit, logit_ood = model(img.cuda())
+            logit, logit_ood = model(img.cuda().half())
         out = torch.nn.functional.softmax(logit_ood, dim=1)
         p1 = torch.logsumexp(logit, dim=1) # ln hat_p(x|din)
         p2 = out[:, 1]  # p(~din|x)
