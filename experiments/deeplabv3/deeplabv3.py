@@ -258,8 +258,8 @@ class DeepWV3PlusTH(nn.Module):
 
         initialize_weights(self.final)
 
-        self.mean = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1).cuda().half()
-        self.std = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1).cuda().half()
+        self.mean = torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1).cuda()
+        self.std = torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1).cuda()
 
         self.logits_ood = _BNReluConv(256 + 48, 2, k=1, bias=True)
 
