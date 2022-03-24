@@ -4,7 +4,11 @@ layout: page
 show_sidebar: false
 hide_footer: false
 ---
-While most of the datasets remain on the evaluation servers to test methods for truely unknown objects, the FS Lost & Found validation set is publicly available as part of the BDL-Benchmarks framework. BDL Benchmarks is an open-source framework that aims to bridge the gap between the design of deep probabilistic machine learning models and their application to real-world problems, hosted on [GitHub](https://github.com/OATML/bdl-benchmarks).
+While most of the datasets remain on the evaluation servers to test methods for truely unknown objects, the FS Lost & Found validation set is publicly available.
+
+<a class="button is-primary" target="_blank" href="http://robotics.ethz.ch/~asl-datasets/Fishyscapes/fishyscapes_lostandfound.zip">download FS Lost & Found validation set</a>
+
+Below we document code that integrates the dataset with TFDS and BDL-Benchmark. This will also allow to download a small validation set of FS Static. We can not provide a zip download for FS Static since we are not allowed to host the Cityscapes data. Our code automatically generates the dataset from Cityscapes.
 
 ```
 pip install git+https://github.com/hermannsblum/bdl-benchmark.git
