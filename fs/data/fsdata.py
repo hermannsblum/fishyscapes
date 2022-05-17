@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 import cv2
 
-from fs.settings import DATA_BASEPATH
+from fs.settings import DATA_BASEPATH, TMP_DIR
 from .data_baseclass import DataBaseclass
 
 
@@ -29,8 +29,8 @@ class FSData(DataBaseclass):
             if 'TMPDIR' in environ:
                 print('INFO Loading %s into machine ... ' % setname, end='')
                 with ZipFile(path.join(base_path, '%s.zip' % setname), 'r') as arch:
-                    arch.extractall(path=environ['TMPDIR'])
-                self.base_path = environ['TMPDIR']
+                    arch.extractall(path=TMPDIR)
+                self.base_path = TMPDIR
                 print('DONE')
 
             all_files = listdir(path.join(self.base_path, setname))
