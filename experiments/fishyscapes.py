@@ -307,6 +307,72 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
     _run.info['ood_ratio_rev1'] = fs.evaluate(wrapper, data)
 
 
+@ex.command
+def nflowjs(testing_dataset, _run, _log, validation=False):
+    # BELOW, IMPORT ANY OF YOUR NETWORK CODE
+    from deeplabv3 import DeepWV3PlusTH
+
+    model = DeepWV3Plus(num_classes=19).cuda()
+    model.load_state_dict(torch.load('experiments/model_7.pth'))
+    model.eval()
+
+    def apply_jsd(logit):
+        out_probs = F.log_softmax(logit / 2., dim=1)
+        uniform_dist = torch.ones_like(out_probs) * 1 / out_probs.size(1)
+
+        m = (out_probs.exp() + uniform_dist) / 2.
+        kl_p_m = F.kl_div(m.log(), out_probs, log_target=True, reduction='none')
+        kl_u_m = F.kl_div(m.log(), uniform_dist, reduction='none')
+        conf_probs = (0.5 * kl_u_m + 0.5 * kl_p_m).sum(dim=1)
+
+        return 1 - conf_probs
+
+    fsdata = FSData(**testing_dataset)
+
+    # BELOW CODE IS NECESSARY FROM US
+    # Hacks because tf.data is shit and we need to translate the dict keys
+    def data_generator():
+        dataset = fsdata.validation_set if validation else fsdata.testset
+        for item in dataset:
+            data = fsdata._get_data(training_format=False, **item)
+            out = {}
+            for m in fsdata.modalities:
+                blob = crop_multiple(data[m])
+                if m == 'rgb':
+                    m = 'image_left'
+                if 'mask' not in fsdata.modalities and m == 'labels':
+                    m = 'mask'
+                out[m] = blob
+            yield out
+
+    data_types = {}
+    for key, item in fsdata.get_data_description()[0].items():
+        if key == 'rgb':
+            key = 'image_left'
+        if 'mask' not in fsdata.modalities and key == 'labels':
+            key = 'mask'
+        data_types[key] = item
+
+    data = tf.data.Dataset.from_generator(data_generator, data_types)
+
+    fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
+
+    # FILL IN THE WRAPPER FUNCTION TO DO A SINGLE-FRAME PREDICTION
+    def wrapper(image):
+        image = image.numpy().astype('uint8')
+        with torch.no_grad():
+            img = torch.from_numpy(image).float().unsqueeze(0).permute(0, 3, 1, 2) / 255.
+            # img should be in [0, 1] and of shape 1x3xHxW
+            logit = model(img.cuda())
+
+        probs = apply_jsd(logit)
+        probs = probs[0].cpu()
+        # output is HxW
+        return probs
+
+    _run.info['nflowjs'] = fs.evaluate(wrapper, data)
+
+
 if __name__ == '__main__':
     ex.run_commandline()
     os._exit(os.EX_OK)
