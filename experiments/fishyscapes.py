@@ -313,7 +313,7 @@ def nflowjs(testing_dataset, _run, _log, validation=False):
     from deeplabv3 import DeepWV3PlusTH
 
     model = DeepWV3Plus(num_classes=19).cuda()
-    model.load_state_dict(torch.load('experiments/model_7.pth'))
+    model.load_state_dict(torch.load('experiments/model_nfjs.pth'))
     model.eval()
 
     def apply_jsd(logit):
