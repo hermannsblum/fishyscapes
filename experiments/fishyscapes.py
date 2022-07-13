@@ -311,6 +311,7 @@ def ood_ratio(testing_dataset, _run, _log, validation=False):
 def nflowjs(testing_dataset, _run, _log, validation=False):
     # BELOW, IMPORT ANY OF YOUR NETWORK CODE
     from deeplabv3 import DeepWV3Plus
+    import torch.nn.functional as F
 
     model = DeepWV3Plus(num_classes=19).cuda()
     model.load_state_dict(torch.load('experiments/model_nfjs.pth'))
