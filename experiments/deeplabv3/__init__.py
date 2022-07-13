@@ -1,1 +1,1 @@
-from .deeplabv3 import DeepWV3PlusTH
+from .deeplabv3 import DeepWV3PlusTH, DeepWV3Plus
