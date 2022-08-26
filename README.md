@@ -24,7 +24,7 @@
 
 ## About code
 
-We added a function `Anonymous_Submission` to `experiments/fishyscapes.py`。In the `get_score` function in line 290, we expect an `ndarray` of shape `(H, W, 3)` as input. The return value of this function is `torch.Tensor` in shape `(H, W)` on CPU.
+We added a function `Anonymous_Submission` to `experiments/fishyscapes.py`。In the `get_score` function in line 290, we expect an `ndarray` of shape `(H, W, 3)` as input. The return value of this function is `numpy.ndarray` in shape `(H, W)` on CPU. A higher anomaly score means the pixel is more likely to be anomaly.
 
 We perform multi-scale inferece on images, which cause the code to run a bit slower. It typically takes about 7 minutes and approximately 15 GB GPU memory to calculate the anormaly score for 100 images in the validation set.
 

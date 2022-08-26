@@ -152,7 +152,7 @@ def get_score(net, image):
     Get Anormaly Score for Image
     :param image: numpy.ndarray It should be in the shape of (H, W, 3), entry in [0, 255]
 
-    :return: torch.Tensor The anormaly_score
+    :return: numpy.ndarray The anomaly_score
     """
     mean_std = ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
@@ -178,7 +178,7 @@ def get_score(net, image):
             del anomaly_score
         anomaly_score_accu /= len(img_ratios)
 
-    return anomaly_score_accu.cpu().squeeze()
+    return -anomaly_score_accu.cpu().squeeze().numpy()
 
 def iter_over_FS_LAF(net):
     #############
