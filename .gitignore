@@ -1,3 +1,5 @@
 fs/settings.py
 
 **/__pycache__
+
+net.pth
