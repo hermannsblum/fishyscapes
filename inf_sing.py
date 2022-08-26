@@ -178,7 +178,7 @@ def get_score(net, image):
             del anomaly_score
         anomaly_score_accu /= len(img_ratios)
 
-    return anomaly_score_accu.cpu()
+    return anomaly_score_accu.cpu().squeeze()
 
 def iter_over_FS_LAF(net):
     #############
@@ -205,7 +205,7 @@ def iter_over_FS_LAF(net):
 
         anomaly_score = get_score(net, image)
 
-        anomaly_score_list.append(anomaly_score.cpu().numpy())
+        anomaly_score_list.append(anomaly_score.cpu().unsqueeze(0).numpy())
         ood_gts_list.append(np.expand_dims(mask, 0))
 
     return anomaly_score_list, ood_gts_list, None
