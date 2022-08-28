@@ -258,8 +258,6 @@ def Anonymous_Submission(testing_dataset, _run, _log, validation=False):
     sys.path.append(parent)
     from inf_sing import get_net, get_score
 
-    from inf_sing import get_score, get_net
-
     detector, _ = get_net()
 
     fsdata = FSData(**testing_dataset)
