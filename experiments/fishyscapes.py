@@ -250,6 +250,14 @@ def ood_segmentation(testing_dataset, _run, _log, ours=True, validation=False):
 @ex.command
 def Anonymous_Submission(testing_dataset, _run, _log, validation=False):
     # BELOW, IMPORT ANY OF YOUR NETWORK CODE
+
+    import os
+    import sys
+    current = os.path.dirname(os.path.realpath(__file__))
+    parent = os.path.dirname(current)
+    sys.path.append(parent)
+    from inf_sing import get_net, get_score
+
     from inf_sing import get_score, get_net
 
     detector, _ = get_net()
