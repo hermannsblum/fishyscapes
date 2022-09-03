@@ -255,7 +255,7 @@ def Anonymous_Submission(testing_dataset, _run, _log, validation=False):
     import sys
     current = os.path.dirname(os.path.realpath(__file__))
     parent = os.path.dirname(current)
-    sys.path.append(parent)
+    sys.path.insert(0, parent)
     from inf_sing import get_net, get_score
 
     detector, _ = get_net()
