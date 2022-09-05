@@ -29,8 +29,8 @@ class FSData(DataBaseclass):
             if 'TMPDIR' in environ:
                 print('INFO Loading %s into machine ... ' % setname, end='')
                 with ZipFile(path.join(base_path, '%s.zip' % setname), 'r') as arch:
-                    arch.extractall(path=TMPDIR)
-                self.base_path = TMPDIR
+                    arch.extractall(path=TMP_DIR)
+                self.base_path = TMP_DIR
                 print('DONE')
 
             all_files = listdir(path.join(self.base_path, setname))
