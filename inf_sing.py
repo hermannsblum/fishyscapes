@@ -157,7 +157,7 @@ def get_score(net, image):
     mean_std = ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
     with torch.no_grad():
-        img_ratios = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 1.75]
+        img_ratios = [0.5, 0.65, 0.85, 1.0, 1.25, 1.75]
         # img_ratios = [1.0]
         # img_ratios = [0.75, 1.0, 1.25]
         ratio_weights = np.ones(len(img_ratios))
