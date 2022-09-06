@@ -253,12 +253,9 @@ def Anonymous_Submission(testing_dataset, _run, _log, validation=False):
 
     import os
     import sys
-    current = os.path.dirname(os.path.realpath(__file__))
-    parent = os.path.dirname(current)
-    sys.path.insert(0, parent)
-    from inf_sing import get_net, get_score
-
-    detector, _ = get_net()
+    from tqdm import tqdm
+    from numba import cuda
+    from bdlb.fishyscapes.benchmark import calculate_metrics_perpixAP
 
     fsdata = FSData(**testing_dataset)
 
@@ -290,12 +287,36 @@ def Anonymous_Submission(testing_dataset, _run, _log, validation=False):
 
     fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
 
-    # FILL IN THE WRAPPER FUNCTION TO DO A SINGLE-FRAME PREDICTION
-    def wrapper(image):
-        image = image.numpy().astype('uint8')
-        return get_score(detector, image)
+    # load data into CPU memory
+    labels = []
+    image_list = []
+    for batch in tqdm(data, desc="Converting Dataset"):
+        labels.append(batch['mask'].numpy())
+        image_list.append(batch['image_left'].numpy().astype('uint8'))
+    del data
 
-    _run.info['Anonymous_Submission'] = fs.evaluate(wrapper, data)
+    # reset GPU memory
+    cuda.get_current_device().reset()
+
+    # introduce pytorch model
+    current = os.path.dirname(os.path.realpath(__file__))
+    parent = os.path.dirname(current)
+    sys.path.insert(0, parent)
+    from inf_sing import get_net, get_score
+    detector, _ = get_net()
+
+    # inference over images
+    uncertainties = []
+    for image in tqdm(image_list, desc="Performing Inference"):
+        uncertainties.append(get_score(detector, image))
+
+    _run.info['Anonymous_Submission'] = calculate_metrics_perpixAP(
+        labels, 
+        uncertainties, 
+        num_points=100,
+    )
+
+    # _run.info['Anonymous_Submission'] = fs.evaluate(wrapper, data)
 
 if __name__ == '__main__':
     ex.run_commandline()
