@@ -97,8 +97,8 @@ def metrics(args, anomaly_score_list, ood_gts_list):
     ood_mask = (ood_gts == 1)
     ind_mask = (ood_gts == 0)
 
-    ood_out = -1 * anomaly_scores[ood_mask]
-    ind_out = -1 * anomaly_scores[ind_mask]
+    ood_out = anomaly_scores[ood_mask]
+    ind_out = anomaly_scores[ind_mask]
 
     ood_label = np.ones(len(ood_out))
     ind_label = np.zeros(len(ind_out))
@@ -158,9 +158,13 @@ def get_score(net, image):
 
     with torch.no_grad():
         img_ratios = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 1.75]
+        # img_ratios = [1.0]
+        # img_ratios = [0.75, 1.0, 1.25]
+        ratio_weights = np.ones(len(img_ratios))
+        assert len(img_ratios) == len(ratio_weights)
         image2 = preprocess_image(image, mean_std)
         anomaly_score_accu = torch.zeros((1, *image.shape[:2]), device="cuda")
-        for r in img_ratios:
+        for r, w in zip(img_ratios, ratio_weights):
             image_in = torch.nn.functional.interpolate(
                 image2, 
                 scale_factor=r, 
@@ -174,9 +178,11 @@ def get_score(net, image):
                 size=anomaly_score_accu.shape[-2:],
                 align_corners=True,
                 mode="bilinear"
-            ).squeeze(1)
+            ).squeeze(1) * w
             del anomaly_score
-        anomaly_score_accu /= len(img_ratios)
+        # anomaly_score_accu /= len(img_ratios)
+        anomaly_score_accu /= sum(ratio_weights)
+
 
     return -anomaly_score_accu.cpu().squeeze().numpy()
 
@@ -185,7 +191,7 @@ def iter_over_FS_LAF(net):
     # FS LAF
     #############
 
-    ds = np.load('/home/DISCOVER_summer2022/liumd/le106/_data.npz')
+    ds = np.load('_data.npz')
     image_list = ds['arr_0']
     mask_list = ds['arr_1']
     
@@ -205,8 +211,8 @@ def iter_over_FS_LAF(net):
 
         anomaly_score = get_score(net, image)
 
-        anomaly_score_list.append(anomaly_score.cpu().unsqueeze(0).numpy())
-        ood_gts_list.append(np.expand_dims(mask, 0))
+        anomaly_score_list.append(anomaly_score)
+        ood_gts_list.append(mask)
 
     return anomaly_score_list, ood_gts_list, None
 

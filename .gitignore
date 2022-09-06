@@ -3,3 +3,11 @@ fs/settings.py
 **/__pycache__
 
 net.pth
+
+_data.npz
+
+build
+
+dist
+
+*.egg-info
