@@ -1,3 +1,5 @@
+import tensorflow as tf
+tf.config.set_visible_devices([], 'GPU')
 from sacred import Experiment
 from sacred.utils import apply_backspaces_and_linefeeds
 from experiments.common import get_observer, experiment_context, clear_directory, load_data
@@ -5,9 +7,8 @@ import os
 import sys
 import logging
 from zipfile import ZipFile
-import tensorflow as tf
 import bdlb
-
+import torch
 from experiments.utils import ExperimentData
 from fs.data.fsdata import FSData
 from fs.data.utils import load_gdrive_file
@@ -17,7 +18,6 @@ from fs.settings import TMP_DIR
 ex = Experiment()
 ex.capture_out_filter = apply_backspaces_and_linefeeds
 ex.observers.append(get_observer())
-
 
 @ex.command
 def saved_model(testing_dataset, model_id, _run, _log, batching=False, validation=False):
@@ -247,6 +247,81 @@ def ood_segmentation(testing_dataset, _run, _log, ours=True, validation=False):
 
     _run.info['awesomemango_anomaly2'] = fs.evaluate(wrapper, data)
 
+@ex.command
+def anomaly_segmentation(testing_dataset, _run, _log, validation=False):
+    # added import inside the function to prevent conflicts if this method is not being tested
+
+    from yutian_segment.test import get_anomaly_detector
+    import numpy as np
+    import torch
+
+    anomaly_segmentor = get_anomaly_detector(num_classes=20)
+    anomaly_segmentor.cuda()
+
+    fsdata = FSData(**testing_dataset)
+
+    # Hacks because tf.data is shit and we need to translate the dict keys
+    def data_generator():
+        dataset = fsdata.validation_set if validation else fsdata.testset
+        for item in dataset:
+            data = fsdata._get_data(training_format=False, **item)
+            out = {}
+            for m in fsdata.modalities:
+                blob = crop_multiple(data[m])
+                if m == 'rgb':
+                    m = 'image_left'
+                if 'mask' not in fsdata.modalities and m == 'labels':
+                    m = 'mask'
+                out[m] = blob
+            yield out
+
+    data_types = {}
+    for key, item in fsdata.get_data_description()[0].items():
+        if key == 'rgb':
+            key = 'image_left'
+        if 'mask' not in fsdata.modalities and key == 'labels':
+            key = 'mask'
+        data_types[key] = item
+
+    data = tf.data.Dataset.from_generator(data_generator, data_types)
+
+    fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
+
+    def normalize(img, mean, std):
+      # pytorch pretrained model need the input range: 0-1
+      if np.amax(img) > 1:
+          img = img.astype(np.float32) / 255.0
+      img = img - mean
+      img = img / std
+
+      return img
+
+    def process_image(img):
+      p_img = img
+
+      if img.shape[2] < 3:
+        im_b = p_img
+        im_g = p_img
+        im_r = p_img
+        p_img = np.concatenate((im_b, im_g, im_r), axis=2)
+
+      image_mean = np.array([0.485, 0.456, 0.406])
+      image_std = np.array([0.229, 0.224, 0.225])
+      p_img = normalize(p_img, image_mean, image_std)
+
+      p_img = p_img.transpose(2, 0, 1)
+
+      return p_img
+
+    def wrapper(image):
+        image = image.numpy()
+        # expects image channels in 2nd dimension
+        image = process_image(image)  # normlise the image and transpose
+        image = torch.from_numpy(image).cuda().type(torch.FloatTensor)
+        anomaly_score = anomaly_segmentor(image, output_anomaly=True)
+        return anomaly_score.cpu().detach()
+
+    _run.info['yutian_rev5'] = fs.evaluate(wrapper, data)
 
 
 @ex.command
