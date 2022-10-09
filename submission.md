@@ -5,6 +5,16 @@ layout: page
 show_sidebar: false
 hide_footer: false
 ---
+
+<article class="message is-warning">
+  <div class="message-header">
+    <p>Interruption in our Operations</p>
+  </div>
+  <div class="message-body">
+    Due to maintainance on the ETH compute cluster, we are unable to process submissions between October 18 and 24.
+  </div>
+</article>
+
 To test methods on the dynamic datasets of the benchmark, we require submission of executables. These may be saved models, binaries, docker images or source code. Any submitted method should take an rgb image as input and produce semantic segmentation aswell as pixelwise uncertainty scores. See below for an example of submitting a tensorflow saved model and instructions for pytorch models.
 
 <a class="button is-primary" target="_blank" href="https://forms.gle/Rrc9nWuxsmks9CuX7">Submit your Model</a>
