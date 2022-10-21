@@ -78,6 +78,62 @@ def resynthesis_model(_run, _log, ours=True, validation=False):
     _run.info['{}_anomaly'.format(model_id)] = m.result().numpy()
 
 
+@ex.command
+def FlowMixDetSFB2(testing_dataset, model_id, _run, _log, batching=False, validation=False):
+    # added import inside the function to prevent conflicts if this method is not being tested
+    ############## START ##############
+    import os, sys, mmcv, torch
+    from mmcv.cnn.utils.sync_bn import revert_sync_batchnorm
+    MMSEG_DIR = os.environ.get('MMSEG_DIR')  # pointer to the provided "fmd" folder
+    sys.path.append(os.path.abspath(MMSEG_DIR))
+    print('Adding {} to sys path'.format(os.path.abspath(MMSEG_DIR)))
+    from mmseg.apis import inference_segmentor, init_segmentor
+    modelid = 'FMDC'
+    config = 'local_configs/segformer/segformer.b2.1024x1024.cityf.{}.py'.format(modelid)
+    if modelid in ['MSP', 'MLG', 'ENE', 'MCD', 'SML']:
+        checkpoint = 'checkpoints/segformer_b2_BASE.pth'
+    elif modelid in ['GMMU', 'GMMC', 'FMDU', 'FMDC', 'FMDU4L', 'FMDC4L']:
+        checkpoint = 'checkpoints/segformer_b2_{}_tanh.pth'.format(modelid)
+    else:
+        raise NotImplementedError('{} is not supported model ID!'.format(modelid))
+
+    gpu_id='0'
+    map_location = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = torch.device(map_location + ':' + gpu_id if torch.cuda.is_available() else map_location)
+
+    checkpoint_file = os.path.join(MMSEG_DIR, checkpoint)
+    config_file = os.path.join(MMSEG_DIR, config)
+
+    model = init_segmentor(config_file, checkpoint_file, device)
+    model = revert_sync_batchnorm(model)
+    ############## END ##############
+
+
+    data = tfds.load(name='cityscapes', split='validation',
+                     data_dir='/cluster/work/riner/users/blumh/tensorflow_datasets')
+    if batching:
+        data = data.batch(1)
+    data = data.prefetch(500)
+
+    ZipFile(load_gdrive_file(model_id, 'zip')).extractall('/tmp/extracted_module')
+    tf.compat.v1.enable_resource_variables()
+    net = tf.saved_model.load('/tmp/extracted_module')
+
+    def eval_func(image):
+        img = mmcv.imread(image)
+        return inference_segmentor(model, img)
+
+    m = tf.keras.metrics.Mean()
+    for batch in tqdm(data, ascii=True):
+        image = batch['image_left'].numpy().astype('uint8')
+        start = time.time()
+        eval_func(batch['image_left'])
+        end = time.time()
+        m.update_state(end - start)
+
+    _run.info['{}_anomaly'.format(model_id)] = m.result().numpy()
+
+
 if __name__ == '__main__':
     ex.run_commandline()
     os._exit(os.EX_OK)

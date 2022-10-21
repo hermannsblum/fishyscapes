@@ -248,6 +248,75 @@ def ood_segmentation(testing_dataset, _run, _log, ours=True, validation=False):
     _run.info['awesomemango_anomaly2'] = fs.evaluate(wrapper, data)
 
 
+@ex.command
+def FlowMixDetSFB2(testing_dataset, _run, _log, validation=False):
+    # added import inside the function to prevent conflicts if this method is not being tested
+    ############## START ##############
+    import os, sys, mmcv, torch
+    from mmcv.cnn.utils.sync_bn import revert_sync_batchnorm
+    MMSEG_DIR = os.environ.get('MMSEG_DIR')  # pointer to the provided "fmd" folder
+    sys.path.append(os.path.abspath(MMSEG_DIR))
+    print('Adding {} to sys path'.format(os.path.abspath(MMSEG_DIR)))
+    from mmseg.apis import inference_segmentor, init_segmentor
+    modelid = 'FMDC'
+    config = 'local_configs/segformer/segformer.b2.1024x1024.cityf.{}.py'.format(modelid)
+    if modelid in ['MSP', 'MLG', 'ENE', 'MCD', 'SML']:
+        checkpoint = 'checkpoints/segformer_b2_BASE.pth'
+    elif modelid in ['GMMU', 'GMMC', 'FMDU', 'FMDC', 'FMDU4L', 'FMDC4L']:
+        checkpoint = 'checkpoints/segformer_b2_{}_tanh.pth'.format(modelid)
+    else:
+        raise NotImplementedError('{} is not supported model ID!'.format(modelid))
+
+    gpu_id='0'
+    map_location = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = torch.device(map_location + ':' + gpu_id if torch.cuda.is_available() else map_location)
+
+    checkpoint_file = os.path.join(MMSEG_DIR, checkpoint)
+    config_file = os.path.join(MMSEG_DIR, config)
+
+    model = init_segmentor(config_file, checkpoint_file, device)
+    model = revert_sync_batchnorm(model)
+    ############## END ##############
+
+    fsdata = FSData(**testing_dataset)
+
+    # Hacks because tf.data is shit and we need to translate the dict keys
+    def data_generator():
+        dataset = fsdata.validation_set if validation else fsdata.testset
+        for item in dataset:
+            data = fsdata._get_data(training_format=False, **item)
+            out = {}
+            for m in fsdata.modalities:
+                blob = crop_multiple(data[m])
+                if m == 'rgb':
+                    m = 'image_left'
+                if 'mask' not in fsdata.modalities and m == 'labels':
+                    m = 'mask'
+                out[m] = blob
+            yield out
+
+    data_types = {}
+    for key, item in fsdata.get_data_description()[0].items():
+        if key == 'rgb':
+            key = 'image_left'
+        if 'mask' not in fsdata.modalities and key == 'labels':
+            key = 'mask'
+        data_types[key] = item
+
+    data = tf.data.Dataset.from_generator(data_generator, data_types)
+
+    fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
+
+    def wrapper(image):
+        image = image.numpy().astype('uint8')
+        img = mmcv.imread(image)
+        results = inference_segmentor(model, img)
+        ret = 1.0 - results[1][0]
+        return ret
+
+    _run.info['FlowMixDetSFB2'] = fs.evaluate(wrapper, data)
+
+
 if __name__ == '__main__':
     ex.run_commandline()
     os._exit(os.EX_OK)
