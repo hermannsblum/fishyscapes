@@ -20,6 +20,35 @@ ex = Experiment()
 ex.capture_out_filter = apply_backspaces_and_linefeeds
 ex.observers.append(get_observer())
 
+@ex.command
+def nls(_run, _log, ours=True, validation=False):
+    for gpu in tf.config.experimental.list_physical_devices('GPU'):
+        tf.config.experimental.set_memory_growth(gpu, True)
+    # added import inside the function to prevent conflicts if this method is not being tested
+    sys.path.insert(0, os.path.join(os.getcwd(), os.path.dirname(os.path.dirname(__file__)), 'driving_uncertainty'))
+    
+    from nls.predict import AnomalySegmentor
+    
+    model_name = "nls"
+    detector = AnomalySegmentor()
+
+    data = tfds.load(name='cityscapes', split='validation',
+                     data_dir='/cluster/work/riner/users/blumh/tensorflow_datasets')
+
+
+    def eval_func(image):
+        return detector.estimator_worker(image)
+
+    m = tf.keras.metrics.Mean()
+    for batch in tqdm(data, ascii=True):
+        image = batch['image_left'].numpy().astype('uint8')
+        start = time.time()
+        _ = detector.get_seg_map(image)
+        end = time.time()
+        m.update_state(end - start)
+
+    _run.info['{}_anomaly'.format(model_name)] = m.result().numpy()
+
 
 @ex.command
 def saved_model(testing_dataset, model_id, _run, _log, batching=False, validation=False):
