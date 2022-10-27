@@ -316,7 +316,6 @@ def anomaly_segmentation_hj(testing_dataset, _run, _log, validation=False):
       return p_img
 
     def wrapper(image):
-        image = torch.from_numpy(image).cuda()
         image = image.numpy()
         # expects image channels in 2nd dimension
         image = process_image(image)  # normlise the image and transpose
