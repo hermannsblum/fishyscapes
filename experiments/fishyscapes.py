@@ -316,12 +316,12 @@ def anomaly_segmentation_hj(testing_dataset, _run, _log, validation=False):
       return p_img
 
     def wrapper(image):
-        image = torch.from_numpy(image).cuda()
         image = image.numpy()
         # expects image channels in 2nd dimension
         image = process_image(image)  # normlise the image and transpose
         image = torch.from_numpy(image).cuda().type(torch.FloatTensor)
-        anomaly_score = anomaly_segmentor(image, output_score=True)
+        anomaly_segmentor.eval()
+        anomaly_score = anomaly_segmentor(image, output_anomaly=True)
         return anomaly_score.cpu().detach()
 
     _run.info['hj_rev1'] = fs.evaluate(wrapper, data)  
