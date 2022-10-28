@@ -252,7 +252,7 @@ def ood_segmentation(testing_dataset, _run, _log, ours=True, validation=False):
 def FlowMixDetSFB2(testing_dataset, _run, _log, validation=False):
     # added import inside the function to prevent conflicts if this method is not being tested
     ############## START ##############
-    import os, sys, mmcv, torch
+    import os, sys, mmcv, torch, cv2
     from mmcv.cnn.utils.sync_bn import revert_sync_batchnorm
     MMSEG_DIR = os.environ.get('MMSEG_DIR')  # pointer to the provided "fmd" folder
     sys.path.append(os.path.abspath(MMSEG_DIR))
@@ -310,6 +310,7 @@ def FlowMixDetSFB2(testing_dataset, _run, _log, validation=False):
     def wrapper(image):
         image = image.numpy().astype('uint8')
         img = mmcv.imread(image)
+        cv2.cvtColor(img, cv2.COLOR_RGB2BGR, img)
         results = inference_segmentor(model, img)
         ret = 1.0 - results[1][0]
         return ret

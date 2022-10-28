@@ -54,9 +54,9 @@ def saved_model(testing_dataset, model_id, _run, _log, batching=False):
 
 
 @ex.command
-def saved_model(testing_dataset, model_id, _run, _log, batching=False):
+def FlowMixDetSFB2(testing_dataset, model_id, _run, _log, batching=False):
     ############## START ##############
-    import os, sys, mmcv, torch
+    import os, sys, mmcv, torch, cv2
     from mmcv.cnn.utils.sync_bn import revert_sync_batchnorm
     MMSEG_DIR = os.environ.get('MMSEG_DIR')  # pointer to the provided "fmd" folder
     sys.path.append(os.path.abspath(MMSEG_DIR))
@@ -103,6 +103,7 @@ def saved_model(testing_dataset, model_id, _run, _log, batching=False):
 
     def eval_func(image):
         img = mmcv.imread(image)
+        cv2.cvtColor(img, cv2.COLOR_RGB2BGR, img)
         results = inference_segmentor(model, img)
         return results[0][0]
 
