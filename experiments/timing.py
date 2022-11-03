@@ -89,11 +89,12 @@ def FlowMixDetSFB2(testing_dataset, model_id, _run, _log, batching=False, valida
     print('Adding {} to sys path'.format(os.path.abspath(MMSEG_DIR)))
     from mmseg.apis import inference_segmentor, init_segmentor
     modelid = 'FMDC'
+    #modelid = 'FMDU'
     config = 'local_configs/segformer/segformer.b2.1024x1024.cityf.{}.py'.format(modelid)
     if modelid in ['MSP', 'MLG', 'ENE', 'MCD', 'SML']:
         checkpoint = 'checkpoints/segformer_b2_BASE.pth'
     elif modelid in ['GMMU', 'GMMC', 'FMDU', 'FMDC', 'FMDU4L', 'FMDC4L']:
-        checkpoint = 'checkpoints/segformer_b2_{}_tanh.pth'.format(modelid)
+        checkpoint = 'checkpoints/segformer_b2_{}.pth'.format(modelid)
     else:
         raise NotImplementedError('{} is not supported model ID!'.format(modelid))
 

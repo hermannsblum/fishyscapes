@@ -259,11 +259,12 @@ def FlowMixDetSFB2(testing_dataset, _run, _log, validation=False):
     print('Adding {} to sys path'.format(os.path.abspath(MMSEG_DIR)))
     from mmseg.apis import inference_segmentor, init_segmentor
     modelid = 'FMDC'
+    #modelid = 'FMDU'
     config = 'local_configs/segformer/segformer.b2.1024x1024.cityf.{}.py'.format(modelid)
     if modelid in ['MSP', 'MLG', 'ENE', 'MCD', 'SML']:
         checkpoint = 'checkpoints/segformer_b2_BASE.pth'
     elif modelid in ['GMMU', 'GMMC', 'FMDU', 'FMDC', 'FMDU4L', 'FMDC4L']:
-        checkpoint = 'checkpoints/segformer_b2_{}_tanh.pth'.format(modelid)
+        checkpoint = 'checkpoints/segformer_b2_{}.pth'.format(modelid)
     else:
         raise NotImplementedError('{} is not supported model ID!'.format(modelid))
 
@@ -312,7 +313,7 @@ def FlowMixDetSFB2(testing_dataset, _run, _log, validation=False):
         img = mmcv.imread(image)
         cv2.cvtColor(img, cv2.COLOR_RGB2BGR, img)
         results = inference_segmentor(model, img)
-        ret = 1.0 - results[1][0]
+        ret = results[1][0]
         return ret
 
     _run.info['FlowMixDetSFB2'] = fs.evaluate(wrapper, data)
