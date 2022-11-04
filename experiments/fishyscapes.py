@@ -249,7 +249,10 @@ def ood_segmentation(testing_dataset, _run, _log, ours=True, validation=False):
 
 
 @ex.command
-def FlowMixDetSFB2(testing_dataset, _run, _log, validation=False):
+def FlowMixDetSFB2(testing_dataset, modelid='FMDC', _run, _log, validation=False):
+    """
+    modelid should be one of 'FMDC' or 'FMDU'
+    """
     # added import inside the function to prevent conflicts if this method is not being tested
     ############## START ##############
     import os, sys, mmcv, torch, cv2
@@ -258,8 +261,6 @@ def FlowMixDetSFB2(testing_dataset, _run, _log, validation=False):
     sys.path.append(os.path.abspath(MMSEG_DIR))
     print('Adding {} to sys path'.format(os.path.abspath(MMSEG_DIR)))
     from mmseg.apis import inference_segmentor, init_segmentor
-    modelid = 'FMDC'
-    #modelid = 'FMDU'
     config = 'local_configs/segformer/segformer.b2.1024x1024.cityf.{}.py'.format(modelid)
     if modelid in ['MSP', 'MLG', 'ENE', 'MCD', 'SML']:
         checkpoint = 'checkpoints/segformer_b2_BASE.pth'
