@@ -433,7 +433,6 @@ def mask_ood(testing_dataset, _run, _log, validation=False):
             image = image.astype('float32') / 255.
             # Convert RGB to BGR
             x = image[:, :, ::-1].copy()
-
             output = predictor(x)
 
             mask_pred = output['mask_pred']
