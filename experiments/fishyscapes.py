@@ -374,6 +374,82 @@ def nflowjs(testing_dataset, _run, _log, validation=False):
     _run.info['nflowjs'] = fs.evaluate(wrapper, data)
 
 
+
+@ex.command
+def mask_ood(testing_dataset, _run, _log, validation=False):
+    # BELOW, IMPORT ANY OF YOUR NETWORK CODE
+    from mask2former import add_maskformer2_config
+    from detectron2.config import get_cfg
+    from detectron2.engine import DefaultPredictor
+    from detectron2.projects.deeplab import add_deeplab_config
+    import numpy as np
+    import torchvision.transforms as tf
+
+    cfg = get_cfg()
+    add_deeplab_config(cfg)
+    add_maskformer2_config(cfg)
+    cfg.merge_from_file('configs/maskformer2_swin_large_IN21k_384_bs18_90k.yaml')
+    cfg.MODEL.MASK_FORMER.TEST.SEMANTIC_ON = True
+
+    predictor = DefaultPredictor(cfg)
+    checkpoint_file = '' # sent via google form
+    predictor.model.load_state_dict(torch.load(checkpoint_file)['model'])
+    predictor.model.eval()
+
+    fsdata = FSData(**testing_dataset)
+
+    # BELOW CODE IS NECESSARY FROM US
+    # Hacks because tf.data is shit and we need to translate the dict keys
+    def data_generator():
+        dataset = fsdata.validation_set if validation else fsdata.testset
+        for item in dataset:
+            data = fsdata._get_data(training_format=False, **item)
+            out = {}
+            for m in fsdata.modalities:
+                blob = crop_multiple(data[m])
+                if m == 'rgb':
+                    m = 'image_left'
+                if 'mask' not in fsdata.modalities and m == 'labels':
+                    m = 'mask'
+                out[m] = blob
+            yield out
+
+    data_types = {}
+    for key, item in fsdata.get_data_description()[0].items():
+        if key == 'rgb':
+            key = 'image_left'
+        if 'mask' not in fsdata.modalities and key == 'labels':
+            key = 'mask'
+        data_types[key] = item
+
+    data = tf.data.Dataset.from_generator(data_generator, data_types)
+
+    fs = bdlb.load(benchmark="fishyscapes", download_and_prepare=False)
+
+    # FILL IN THE WRAPPER FUNCTION TO DO A SINGLE-FRAME PREDICTION
+    def wrapper(image):
+        image = image.numpy().astype('uint8') # HxWxC in range [0, 255]
+        with torch.no_grad():
+            image = image.astype('float32') / 255.
+            # Convert RGB to BGR
+            x = image[:, :, ::-1].copy()
+
+            output = predictor(x)
+
+            mask_pred = output['mask_pred']
+            mask_cls = output['mask_cls']
+            mask_pred = mask_pred.sigmoid()
+            mask_cls = mask_cls.softmax(-1)[..., :-1]
+            max_p = mask_cls.max(1)[0]
+            s_x = max_p
+            score = - (mask_pred * s_x.view(-1, 1, 1)).sum(0)
+            probs = score.squeeze().cpu()
+        return probs
+
+    _run.info['mask_score'] = fs.evaluate(wrapper, data)
+
+
+
 if __name__ == '__main__':
     ex.run_commandline()
     os._exit(os.EX_OK)
