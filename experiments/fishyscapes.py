@@ -389,12 +389,10 @@ def mask_ood(testing_dataset, _run, _log, validation=False):
     add_deeplab_config(cfg)
     add_maskformer2_config(cfg)
     cfg.merge_from_file('configs/maskformer2_swin_large_IN21k_384_bs18_90k.yaml')
+    cfg.MODEL.WEIGHTS = 'Sent via google form'
     cfg.MODEL.MASK_FORMER.TEST.SEMANTIC_ON = True
 
     predictor = DefaultPredictor(cfg)
-    checkpoint_file = '' # sent via google form
-    predictor.model.load_state_dict(torch.load(checkpoint_file)['model'])
-    predictor.model.eval()
 
     fsdata = FSData(**testing_dataset)
 
@@ -430,7 +428,7 @@ def mask_ood(testing_dataset, _run, _log, validation=False):
     def wrapper(image):
         image = image.numpy().astype('uint8') # HxWxC in range [0, 255]
         with torch.no_grad():
-            image = image.astype('float32') / 255.
+            # image = image.astype('float32') / 255.
             # Convert RGB to BGR
             x = image[:, :, ::-1].copy()
             output = predictor(x)
