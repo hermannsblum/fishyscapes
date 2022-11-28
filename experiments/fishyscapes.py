@@ -15,7 +15,7 @@ from fs.data.utils import load_gdrive_file
 from fs.data.augmentation import crop_multiple
 from fs.settings import TMP_DIR
 
-ex = Experiment()
+ex = Experiment(save_git_info=False)
 ex.capture_out_filter = apply_backspaces_and_linefeeds
 ex.observers.append(get_observer())
 
@@ -383,16 +383,16 @@ def mask_ood(testing_dataset, _run, _log, validation=False):
     from detectron2.engine import DefaultPredictor
     from detectron2.projects.deeplab import add_deeplab_config
     import numpy as np
-    import torchvision.transforms as tf
+    import torchvision.transforms as tvtf
 
     cfg = get_cfg()
     add_deeplab_config(cfg)
     add_maskformer2_config(cfg)
-    cfg.merge_from_file('configs/maskformer2_swin_large_IN21k_384_bs18_90k.yaml')
+    cfg.merge_from_file('/fishyscapes/experiments/configs/maskformer2_swin_large_IN21k_384_bs18_90k.yaml')
     cfg.MODEL.MASK_FORMER.TEST.SEMANTIC_ON = True
 
     predictor = DefaultPredictor(cfg)
-    checkpoint_file = '' # sent via google form
+    checkpoint_file = '/fishyscapes/model_final.pth' # sent via google form
     predictor.model.load_state_dict(torch.load(checkpoint_file)['model'])
     predictor.model.eval()
 
