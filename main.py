@@ -3,7 +3,7 @@ import subprocess
 import sys
 
 
-def run(cmd: list[str], cwd: str = None, env: dict[str, str] = None):
+def run(cmd, cwd=None, env=None):
     print(f'>>> {cwd} $ {" ".join(cmd)}')
     p = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                          cwd=cwd, env=env, universal_newlines=True, bufsize=1)
