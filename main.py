@@ -24,11 +24,18 @@ def run(cmd: list[str], cwd: str = None, env: dict[str, str] = None):
             print(line_err, end='')
         if rc is not None:
             break
+    print('EXIT CODE:', rc)
     return rc, ''.join(lines), ''.join(lines_out), ''.join(lines_err)
 
 
 def main():
     print(sys.version)
+    run(['pwd'])
+    run(['cat', '/proc/cpuinfo'])
+    run(['free'])
+    run(['nvidia-smi'])
+    run(['nvidia-smi', '-L'])
+
     run(['mkdir', '-p', '/tmp/results'])
     run(['rm', '-rf', '/tmp/results/*'])
     cmd = [
@@ -36,8 +43,7 @@ def main():
         '--bind', '/tmp/results:/workspace/synboost/results',
         'synboost_1.0.sif',
     ]
-    rc, *_ = run(cmd, '/submitted_containers')
-    print(rc)
+    run(cmd, '/submitted_containers')
     pass
 
 
