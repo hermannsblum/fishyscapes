@@ -30,6 +30,7 @@ def run(cmd, cwd=None, env=None):
 
 def main():
     print(sys.version)
+    run(['which', 'singularity'])
     run(['pwd'])
     run(['cat', '/proc/cpuinfo'])
     run(['free'])
