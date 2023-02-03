@@ -34,7 +34,7 @@ def main():
     run(['pwd'])
     run(['cat', '/proc/cpuinfo'])
     run(['free'])
-    # run(['nvidia-smi'])
+    run(['nvidia-smi'])
     # run(['nvidia-smi', '-L'])
 
     run(['mkdir', '-p', '/tmp/results'])
