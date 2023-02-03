@@ -46,9 +46,7 @@ def main():
     ]
     run(cmd, '/submitted_containers')
     cmd2 = [
-        'singularity', 'run', '--nv', '--pwd', '/workspace/synboost',
-        '--bind', '/tmp/results:/workspace/synboost/results',
-        'synboost_1.0.sif', 'python', 'eval.py',
+        'python', 'eval.py',
     ]
     run(cmd2, '/submitted_containers')
     pass
@@ -56,3 +54,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    print(sys.argv)
