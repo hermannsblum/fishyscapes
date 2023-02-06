@@ -5,7 +5,7 @@
   "val_labels_path": "/valdata",
   "run": {
     "pwd": "/workspace/synboost",
-    "rgb_path": "/workspace/synboost/validation_set",
+    "rgb_path": "/workspace/synboost/validation_set/rgb",
     "pred_path": "/workspace/synboost/results"
   }
 }

@@ -15,7 +15,7 @@ def main():
         '--bind', f"{settings['tmp_pred_path']}:{settings['run']['pred_path']},"
                   f"{settings['val_rgb_path']}:{settings['run']['rgb_path']},"
                   f"demo.py:/workspace/synboost/main.py",
-        settings['sif_path'], 'python main.py --demo_folder validation_set --save_folder results'
+        settings['sif_path']
     ]
     run(cmd)
 
