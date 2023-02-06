@@ -6,7 +6,12 @@ from utils import run
 
 
 def main():
-    print(json.loads(sys.argv[1])['event'])
+    try:
+        pr_id = json.loads(sys.argv[1])['event']['number']
+    except Exception as _:
+        pr_id = None
+    print(f'pr_id: {pr_id}')
+
     with open('settings.json', 'r') as f:
         settings = json.load(f)
 
