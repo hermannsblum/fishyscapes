@@ -111,6 +111,7 @@ def main():
 
     ret = calculate_metrics_perpixAP(im_labels, im_uncertainties)
     print(ret)
+    assert ret['AP'] >= settings['ap_thresh'] and ret['FPR@95%TPR'] <= settings['fpr_thresh']
 
 
 if __name__ == '__main__':

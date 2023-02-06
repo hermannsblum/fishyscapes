@@ -35,12 +35,12 @@ jobs:
       - name: Print System Info
         if: always()
         run: |
-          python3 info.py ${{ github.event.number }}
+          python3 info.py ${{ github.event.number }} ${{ toJson(github) }}
 
       - name: Run Singularity
         if: always()
         run: |
-          python3 main.py
+          python3 main.py ${{ toJson(github) }} ${{ github.event.number }}
 
       - name: Evaluation
         if: always()
