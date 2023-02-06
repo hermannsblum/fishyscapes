@@ -9,7 +9,7 @@ def main():
         settings = json.load(f)
 
     run(['mkdir', '-p', settings['tmp_pred_path']])
-    run(['rm', '-rf', os.path.join(settings['tmp_results_path'], '*')])
+    run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')])
     cmd = [
         'singularity', 'run', '--nv', '--pwd', settings['run']['pwd'],
         '--bind', f"{settings['tmp_pred_path']}:{settings['run']['pred_path']},"
