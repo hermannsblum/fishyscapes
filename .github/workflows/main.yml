@@ -25,25 +25,25 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Dump GitHub Context
-        if: always()
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB_CONTEXT"
+#      - name: Dump GitHub Context
+#        if: always()
+#        env:
+#          GITHUB_CONTEXT: ${{ toJson(github) }}
+#        run: |
+#          echo "$GITHUB_CONTEXT"
 
-      - name: Print System Info
-        if: always()
-        run: |
-          python3 info.py
-
-#      - name: Run Singularity
+#      - name: Print System Info
 #        if: always()
 #        run: |
-#          python3 main.py '${{ toJSON(github) }}' '${{ toJSON(job) }}' '${{ toJSON(steps) }}' '${{ toJSON(runner) }}' '${{ toJSON(strategy) }}' '${{ toJSON(matrix) }}'
+#          python3 info.py
+
+      - name: Run Singularity
+        if: always()
+        run: |
+          python3 main.py '${{ toJSON(github) }}' '${{ toJSON(job) }}' '${{ toJSON(steps) }}' '${{ toJSON(runner) }}' '${{ toJSON(strategy) }}' '${{ toJSON(matrix) }}'
 
       - name: Evaluation
         if: always()
         run: |
-          pip install numpy Pillow
+          pip3 install numpy Pillow
           python3 eval.py
