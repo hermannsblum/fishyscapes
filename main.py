@@ -8,14 +8,16 @@ def main():
     with open('settings.json', 'r') as f:
         settings = json.load(f)
 
-    run(['mkdir', '-p', settings['tmp_results_path']])
+    run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['rm', '-rf', os.path.join(settings['tmp_results_path'], '*')])
     cmd = [
         'singularity', 'run', '--nv', '--pwd', settings['run']['pwd'],
-        '--bind', f"{settings['tmp_results_path']}:{settings['run']['results_path']}",
+        '--bind', f"{settings['tmp_pred_path']}:{settings['run']['pred_path']},"
+                  f"{settings['val_rgb_path']}:{settings['run']['rgb_path']},"
+                  f"demo.py:/workspace/synboost/main.py",
         settings['sif_path'],
     ]
-    run(cmd, '/submitted_containers')
+    run(cmd)
 
 
 if __name__ == '__main__':

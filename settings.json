@@ -1,10 +1,11 @@
 {
-  "sif_path": "synboost_1.0.sif",
-  "tmp_results_path": "/tmp/results",
+  "sif_path": "/submitted_containers/synboost_1.0.sif",
+  "tmp_pred_path": "/tmp/results",
   "val_rgb_path": "/valdata",
   "val_labels_path": "/valdata",
   "run": {
     "pwd": "/workspace/synboost",
-    "results_path": "/workspace/synboost/results"
+    "rgb_path": "/workspace/synboost/validation_set",
+    "pred_path": "/workspace/synboost/results"
   }
 }
