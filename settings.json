@@ -1,0 +1,8 @@
+{
+  "sif_path": "synboost_1.0.sif",
+  "tmp_results_path": "/tmp/results",
+  "run": {
+    "pwd": "/workspace/synboost",
+    "results_path": "/workspace/synboost/results"
+  }
+}

@@ -25,6 +25,20 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Run
+      - name: Dump GitHub Context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
         run: |
-          python3 main.py ${{ github.event.id }}
+          echo "$GITHUB_CONTEXT"
+
+      - name: Print System Info
+        run: |
+          python3 info.py
+
+      - name: Run Singularity
+        run: |
+          python3 main.py
+
+      - name: Evaluation
+        run: |
+          python3 eval.py
