@@ -1,10 +1,12 @@
 import json
 import os
+import sys
 
 from utils import run
 
 
 def main():
+    print(json.loads(sys.argv[1])['event'])
     with open('settings.json', 'r') as f:
         settings = json.load(f)
 
