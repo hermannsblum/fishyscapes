@@ -45,5 +45,5 @@ jobs:
       - name: Evaluation
         if: always()
         run: |
-          pip install numpy, Pillow
+          pip install numpy Pillow
           python3 eval.py
