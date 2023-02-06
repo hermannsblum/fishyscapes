@@ -29,13 +29,15 @@ def run(cmd, cwd=None, env=None):
 
 
 def main():
+    print(sys.argv)
     print(sys.version)
     run(['which', 'singularity'])
     run(['pwd'])
     run(['cat', '/proc/cpuinfo'])
     run(['free'])
     run(['nvidia-smi'])
-    # run(['nvidia-smi', '-L'])
+    run(['nvidia-smi', '-L'])
+    exit(0)
 
     run(['mkdir', '-p', '/tmp/results'])
     run(['rm', '-rf', '/tmp/results/*'])
@@ -46,7 +48,7 @@ def main():
     ]
     run(cmd, '/submitted_containers')
     cmd2 = [
-        'python', 'eval.py',
+        'python3', 'eval.py',
     ]
     run(cmd2, '/submitted_containers')
     pass
