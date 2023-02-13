@@ -7,9 +7,5 @@
     "pwd": "/workspace/synboost",
     "rgb_path": "/workspace/synboost/validation_set",
     "pred_path": "/workspace/synboost/results"
-  },
-  "ap_ref": 0.6,
-  "ap_thresh": 0.1,
-  "fpr_ref": 0.3,
-  "fpr_thresh": 0.1
+  }
 }
