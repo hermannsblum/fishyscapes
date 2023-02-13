@@ -16,3 +16,16 @@ hide_footer: false
   </div>
 </article>
 
+# container input and output requirements
+The folder `/input` contains a number of files of the format `DDDD_*.png` where each `D` is a digit, e.g. `0000_04_Maurener_Weg_8_000000_000030_rgb.png0000_04_Maurener_Weg_8_000000_000030_rgb.png`. It is the same naming convention that is used in the validation set. The container should then save the output for each input in separate files: `/output/DDDD_anomaly.npy` should be a saved numpy array of the same resolution as the input image with per-pixel anomaly scores. `/output/DDDD_segmentation.npy` should be a saved numpy integer array of the same resolution as the input image with a per-pixel assigned class between 0 and 19.
+
+# recommendations for working with singularity containers
+We recommend to use docker as much as possible and only convert to singularity format as one of the last steps. A good starting point are e.g. the nvidia docker images or existing containers with pre-installed pytorch or tensorflow in the version that you require.
+
+# submitting your container
+Once you have a submittable `.simg` singularity container, please follow these steps:
+
+1. Create a pull-request [here](https://github.com/hermannsblum/fishyscapes) where you edit the file `validation_performance.json` with your expected performance on the validation set. This will be used to validate that your uploaded container produces the same performance on our cluster.
+2. Upload your container with this form and enter the number of your pull-request.
+3. Check if the validation of the pull-request succeeds. If there are errors, you can find them in the github action log. Once you have fixed them, submit a new container following step 2. Repeat until the validation succeeds and you fixed all errors.
+4. We will run your submitted model on the test sets and report the results on the website. You will receive a comment to your pull-request once the results are online.
