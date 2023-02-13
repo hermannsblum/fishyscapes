@@ -103,6 +103,8 @@ def list_img_from_dir(data_dir: str, ext: str = '.png'):
 def main():
     with open('settings.json', 'r') as f:
         settings = json.load(f)
+    with open('validation_performance.json', 'r') as f:
+        settings.update(json.load(f))
 
     path_labels = list_img_from_dir(settings['val_labels_path'], '_labels.png')
     path_uncertainties = list_img_from_dir(settings['tmp_pred_path'], '.npy')
@@ -112,7 +114,10 @@ def main():
     ret = calculate_metrics_perpixAP(im_labels, im_uncertainties)
     print(ret)
 
-    assert ret['AP'] >= settings['ap_thresh'] and ret['FPR@95%TPR'] <= settings['fpr_thresh']
+    # threshold for numerical errors
+    eps = 0.001
+    assert ret['AP'] >= settings['ap'] - eps and ret['AP'] <= settings['ap'] + eps
+    assert ret['FPR@95%TPR'] >= settings['fpr'] - eps and ret['FPR@95%TPR'] <= settings['fpr'] + eps
     print('Successfully Validated !!!')
 
 
