@@ -15,8 +15,8 @@ def main():
     with open('settings.json', 'r') as f:
         settings = json.load(f)
 
-    run(['ls', '/submissions'])
-    run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{497}.simg'), os.path.join('/tmp', f'fishyscapes_pr_{497}.simg')])
+    # run(['ls', '/submissions'])
+    run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{497}'), os.path.join('/tmp', f'fishyscapes_pr_{497}.simg')])
 
     run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')])
