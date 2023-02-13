@@ -112,7 +112,8 @@ def main():
     ret = calculate_metrics_perpixAP(im_labels, im_uncertainties)
     print(ret)
 
-    assert ret['AP'] >= settings['ap_thresh'] and ret['FPR@95%TPR'] <= settings['fpr_thresh']
+    assert np.abs(ret['AP'] - settings['ap_ref']) <= settings['ap_thresh']
+    assert np.abs(ret['FPR@95%TPR'] - settings['fpr_ref']) <= settings['fpr_thresh']
     print('Successfully Validated !!!')
 
 

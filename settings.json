@@ -1,13 +1,15 @@
 {
   "sif_path": "/submitted_containers/synboost_1.0.sif",
   "tmp_pred_path": "/tmp/results",
-  "val_rgb_path": "/valdata",
-  "val_labels_path": "/valdata",
+  "val_rgb_path": "/validation_inputs",
+  "val_labels_path": "/validation_labels",
   "run": {
     "pwd": "/workspace/synboost",
-    "rgb_path": "/workspace/synboost/validation_set/rgb",
+    "rgb_path": "/workspace/synboost/validation_set",
     "pred_path": "/workspace/synboost/results"
   },
-  "ap_thresh": 0.5,
-  "fpr_thresh": 0.4
+  "ap_ref": 0.6,
+  "ap_thresh": 0.1,
+  "fpr_ref": 0.3,
+  "fpr_thresh": 0.1
 }
