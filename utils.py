@@ -24,4 +24,5 @@ def run(cmd, cwd=None, env=None):
         if rc is not None:
             break
     print('EXIT CODE:', rc)
+    assert rc == 0
     return rc, ''.join(lines), ''.join(lines_out), ''.join(lines_err)
