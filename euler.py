@@ -4,6 +4,7 @@ import sys
 from PIL import Image
 import wandb
 import numpy as np
+import time
 
 from utils import run, calculate_metrics_perpixAP, list_img_from_dir
 
@@ -11,7 +12,9 @@ from utils import run, calculate_metrics_perpixAP, list_img_from_dir
 def main():
     pr_id = json.loads(sys.argv[1])
     print(f'pr_id: {pr_id}', flush=True)
-    dataset = 'lostandfound_fishyscapes'
+    dataset = sys.argv[2]
+    print(f'{dataset=}', flush=True)
+    assert dataset in ['lostandfound_fishyscapes', 'fishyscapes_static_ood']
     
 
     with open('settings.json', 'r') as f:
@@ -20,7 +23,7 @@ def main():
     # make directories and copy data
     img_path = os.path.join(os.environ['TMPDIR'], 'inputs')
     run(['mkdir', img_path])
-    run(['cp', '/cluster/work/riner/users/fishyscapes/lostandfound_fishyscapes/test_images.zip', os.environ['TMPDIR']])
+    run(['cp', f'/cluster/work/riner/users/fishyscapes/{dataset}/test_images.zip', os.environ['TMPDIR']])
     run(['unzip', os.path.join(os.environ['TMPDIR'], 'test_images.zip'), '-d', img_path])
     out_path = os.path.join(os.environ['TMPDIR'], 'outputs')
     run(['mkdir', out_path])
@@ -34,14 +37,16 @@ def main():
         simg_path
     ]
     try:
+        start = time.time()
         run(cmd)
+        end = time.time()
     except AssertionError:
         raise UserWarning("Execution of submitted container failed. Please take a look at the logs and resubmit a new container.")
 
     # get evaluation labels
     label_path = os.path.join(os.environ['TMPDIR'], 'labels')
     run(['mkdir', label_path])
-    run(['cp', '/cluster/work/riner/users/fishyscapes/lostandfound_fishyscapes/test_labels.zip', os.environ['TMPDIR']])
+    run(['cp', f'/cluster/work/riner/users/fishyscapes/{dataset}/test_labels.zip', os.environ['TMPDIR']])
     run(['unzip', os.path.join(os.environ['TMPDIR'], 'test_labels.zip'), '-d', label_path])
 
     # evaluate outputs
@@ -51,6 +56,7 @@ def main():
     scores = [np.load(p) for p in scores]
 
     ret = calculate_metrics_perpixAP(labels, scores)
+    ret['inference_time'] = end - start
     print(ret)
     wandb.init(project='fishyscapes', name=f"{pr_id}-{dataset}", config=dict(pr=pr_id, dataset=dataset))
     wandb.log(ret)
