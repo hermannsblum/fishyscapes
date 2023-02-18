@@ -30,6 +30,8 @@ def main():
         run(cmd)
     except AssertionError:
         raise UserWarning("Execution of submitted container failed. Please take a look at the logs and resubmit a new container.")
+        
+    run(['ls', settings['tmp_pred_path']])
 
 
 if __name__ == '__main__':
