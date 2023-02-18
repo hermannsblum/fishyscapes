@@ -107,7 +107,7 @@ def main():
         settings.update(json.load(f))
 
     path_labels = list_img_from_dir(settings['val_labels_path'], '_labels.png')
-    path_uncertainties = list_img_from_dir('/output', 'anomaly.npy')
+    path_uncertainties = list_img_from_dir(settings['tmp_pred_path'], 'anomaly.npy')
     im_labels = [np.asarray(Image.open(p)) for p in path_labels]
     im_uncertainties = [np.load(p) for p in path_uncertainties]
 
