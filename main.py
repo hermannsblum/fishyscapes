@@ -21,9 +21,9 @@ def main():
     run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')])
     cmd = [
-        'singularity', 'run', '--nv', '--pwd', settings['run']['pwd'],
-        '--bind', f"{settings['tmp_pred_path']}:{settings['run']['pred_path']},"
-                  f"{settings['val_rgb_path']}:{settings['run']['rgb_path']}",
+        'singularity', 'run', '--nv',
+        '--bind', f"{settings['tmp_pred_path']}:/output,"
+                  f"{settings['val_rgb_path']}:/input",
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')
     ]
     try:
