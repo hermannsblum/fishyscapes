@@ -11,8 +11,13 @@ def main():
 
     with open('settings.json', 'r') as f:
         settings = json.load(f)
+    with open('validation_performance.json', 'r') as f:
+        settings.update(json.load(f))
 
     # run(['ls', '/submissions'])
+    if settings.get('download_url'):
+        # download image from set url instead of upload form
+        run(['wget', settings['download_url'], '-o', f'/submissions/fishyscapes_pr_{pr_id}'])
     try:
         run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{pr_id}'), os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')])
     except AssertionError:
