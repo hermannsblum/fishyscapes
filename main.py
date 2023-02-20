@@ -17,7 +17,7 @@ def main():
     # run(['ls', '/submissions'])
     if settings.get('download_url'):
         # download image from set url instead of upload form
-        run(['wget', settings['download_url'], '-O', f'/submissions/fishyscapes_pr_{pr_id}'])
+        run(['wget', settings['download_url'], '-O', f'/submissions/fishyscapes_pr_{pr_id}', '-o', '/tmp/wget_output.log'])
     try:
         run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{pr_id}'), os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')])
     except AssertionError:
