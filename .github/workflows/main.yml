@@ -34,6 +34,10 @@ jobs:
 #        if: always()
 #        run: |
 #          python3 info.py
+      - name: Setup
+        if: always()
+        run: |
+          python3 -m pip install --upgrade pip && python3 -m pip install numpy pillow
 
       - name: Run Singularity
         if: always()
