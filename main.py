@@ -12,7 +12,6 @@ def main():
     with open('settings.json', 'r') as f:
         settings = json.load(f)
 
-    # run(['ls', '/submissions'])
     try:
         run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{pr_id}'), os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')])
     except AssertionError:
@@ -21,7 +20,7 @@ def main():
     run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')])
     cmd = [
-        'singularity', 'run', '--nv', '--pwd', settings['run']['pwd'],
+        'singularity', 'run', '--nv',
         '--bind', f"{settings['tmp_pred_path']}:{settings['run']['pred_path']},"
                   f"{settings['val_rgb_path']}:{settings['run']['rgb_path']}",
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')

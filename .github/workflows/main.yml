@@ -30,11 +30,6 @@ jobs:
 #        run: |
 #          echo "$GITHUB_CONTEXT"
 
-#      - name: Print System Info
-#        if: always()
-#        run: |
-#          python3 info.py
-
       - name: Run Singularity
         if: always()
         run: |
