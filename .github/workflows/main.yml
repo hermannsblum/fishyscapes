@@ -5,8 +5,6 @@ name: Validation
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "singularity_submissions" ]
   pull_request:
     branches: [ "master" ]
 
@@ -32,15 +30,12 @@ jobs:
 #        run: |
 #          echo "$GITHUB_CONTEXT"
 
-#      - name: Run Singularity
-#        if: always()
-#        run: |
-#          python3 main.py '${{ toJSON(github) }}' '${{ toJSON(job) }}' '${{ toJSON(steps) }}' '${{ toJSON(runner) }}' '${{ toJSON(strategy) }}' '${{ toJSON(matrix) }}'
+      - name: Run Singularity
+        if: always()
+        run: |
+          python3 main.py '${{ toJSON(github) }}' '${{ toJSON(job) }}' '${{ toJSON(steps) }}' '${{ toJSON(runner) }}' '${{ toJSON(strategy) }}' '${{ toJSON(matrix) }}'
 
       - name: Evaluation
         if: always()
         run: |
-          id
-          rm -rf /tmp/results/*
-          ls -la /tmp/results
           python3 eval.py
