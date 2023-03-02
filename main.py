@@ -18,7 +18,7 @@ def main():
     #     raise UserWarning("Failed to copy singularity container. Have you uploaded a container following the website instructions?")
 
     run(['mkdir', '-p', settings['tmp_pred_path']])
-    run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')], shell=True)
+    run(' '.join(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')]), shell=True)
     run(['ls', '-al', os.path.join(settings['tmp_pred_path'])])
     exit(0)
     cmd = [
