@@ -23,12 +23,12 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-#      - name: Dump GitHub Context
-#        if: always()
-#        env:
-#          GITHUB_CONTEXT: ${{ toJson(github) }}
-#        run: |
-#          echo "$GITHUB_CONTEXT"
+      - name: Setup
+        if: always()
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install numpy pillow
+          id -u blumh &>/dev/null || useradd blumh
 
       - name: Run Singularity
         if: always()

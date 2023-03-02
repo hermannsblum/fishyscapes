@@ -26,7 +26,7 @@ def main():
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')
     ]
     try:
-        run(cmd)
+        run(['runuser', '-l', 'blumh', '-c', ' '.join(cmd)])
     except AssertionError:
         raise UserWarning("Execution of submitted container failed. Please take a look at the logs and resubmit a new container.")
 
