@@ -40,5 +40,7 @@ jobs:
       - name: Evaluation
         if: always()
         run: |
+          id
+          rm -f /tmp/results/0000_semantic.npy
           ls -la /tmp/results
           python3 eval.py
