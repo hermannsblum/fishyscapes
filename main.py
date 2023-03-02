@@ -19,6 +19,8 @@ def main():
 
     run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')])
+    run(['ls', '-al', os.path.join(settings['tmp_pred_path'], '*')])
+    exit(0)
     cmd = [
         'singularity', 'run', '--nv',
         '--bind', f"{settings['tmp_pred_path']}:{settings['run']['pred_path']},"
