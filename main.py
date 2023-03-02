@@ -25,7 +25,7 @@ def main():
 
     run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['chmod', '777', settings['tmp_pred_path']])
-    run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')])
+    run(' '.join(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')]), shell=True)
     cmd = [
         'singularity', 'run', '--nv', '--writable-tmpfs',
         '--bind', f"{settings['tmp_pred_path']}:/output,"
