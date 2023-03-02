@@ -12,13 +12,13 @@ def main():
     with open('settings.json', 'r') as f:
         settings = json.load(f)
 
-    try:
-        run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{pr_id}'), os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')])
-    except AssertionError:
-        raise UserWarning("Failed to copy singularity container. Have you uploaded a container following the website instructions?")
+    # try:
+    #     run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{pr_id}'), os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')])
+    # except AssertionError:
+    #     raise UserWarning("Failed to copy singularity container. Have you uploaded a container following the website instructions?")
 
     run(['mkdir', '-p', settings['tmp_pred_path']])
-    run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')])
+    run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')], shell=True)
     run(['ls', '-al', os.path.join(settings['tmp_pred_path'])])
     exit(0)
     cmd = [
