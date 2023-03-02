@@ -41,6 +41,6 @@ jobs:
         if: always()
         run: |
           id
-          rm -f /tmp/results/0000_semantic.npy
+          rm -rf /tmp/results/*
           ls -la /tmp/results
           python3 eval.py
