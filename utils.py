@@ -3,7 +3,7 @@ import subprocess
 
 
 def run(cmd, cwd=None, env=None, shell=False):
-    print(f'>>> {cwd} $ {" ".join(cmd)}')
+    print(f'>>> {cwd} $ {cmd if isinstance(cmd, str) else " ".join(cmd)}')
     p = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                          shell=shell, cwd=cwd, env=env, universal_newlines=True, bufsize=1)
     os.set_blocking(p.stdout.fileno(), False)
