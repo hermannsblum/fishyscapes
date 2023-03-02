@@ -24,6 +24,7 @@ def main():
         raise UserWarning("Failed to copy singularity container. Have you uploaded a container following the website instructions?")
 
     run(['mkdir', '-p', settings['tmp_pred_path']])
+    run(['chmod', '777', settings['tmp_pred_path']])
     run(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')])
     cmd = [
         'singularity', 'run', '--nv', '--writable-tmpfs',
