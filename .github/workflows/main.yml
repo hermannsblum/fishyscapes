@@ -31,11 +31,12 @@ jobs:
           id -u blumh &>/dev/null || useradd blumh
 
       - name: Run Singularity
+        id: singularity
         if: always()
         run: |
           python3 main.py '${{ toJSON(github) }}' '${{ toJSON(job) }}' '${{ toJSON(steps) }}' '${{ toJSON(runner) }}' '${{ toJSON(strategy) }}' '${{ toJSON(matrix) }}'
 
       - name: Evaluation
-        if: always()
+        if: steps.singularity.outputs.exit_code == 0
         run: |
           python3 eval.py
