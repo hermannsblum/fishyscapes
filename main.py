@@ -26,7 +26,6 @@ def main():
                   f"{settings['val_rgb_path']}:{settings['run']['rgb_path']}",
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')
     ]
-
     try:
         run(cmd)
     except AssertionError:
