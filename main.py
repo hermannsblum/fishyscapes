@@ -24,7 +24,7 @@ def main():
         'singularity', 'run', '--nv',
         '--bind', f"{settings['tmp_pred_path']}:{settings['run']['pred_path']},"
                   f"{settings['val_rgb_path']}:{settings['run']['rgb_path']}",
-        os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')
+        os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg') + " python3 /workspace/test.py"
     ]
     try:
         run(cmd)
