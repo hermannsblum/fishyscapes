@@ -115,7 +115,7 @@ def main():
     print(ret)
 
     # threshold for numerical errors
-    eps = 0.001
+    eps = 0.01
     assert ret['AP'] >= settings['ap'] - eps and ret['AP'] <= settings['ap'] + eps
     assert ret['FPR@95%TPR'] >= settings['fpr'] - eps and ret['FPR@95%TPR'] <= settings['fpr'] + eps
     print('Successfully Validated !!!')

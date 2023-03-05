@@ -14,10 +14,10 @@ def main():
     with open('validation_performance.json', 'r') as f:
         settings.update(json.load(f))
 
-    # run(['ls', '/submissions'])
     if settings.get('download_url'):
         # download image from set url instead of upload form
         run(['wget', settings['download_url'], '-O', f'/submissions/fishyscapes_pr_{pr_id}', '-o', '/tmp/wget_output.log'])
+
     try:
         run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{pr_id}'), os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')])
     except AssertionError:
@@ -27,7 +27,7 @@ def main():
     run(['chmod', '777', settings['tmp_pred_path']])
     run(' '.join(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')]), shell=True)
     cmd = [
-        'singularity', 'run', '--nv', '--writable-tmpfs',
+        'singularity', 'run', '--nv',
         '--bind', f"{settings['tmp_pred_path']}:/output,"
                   f"{settings['val_rgb_path']}:/input",
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')
@@ -36,6 +36,8 @@ def main():
         run(['runuser', '-l', 'blumh', '-c', ' '.join(cmd)])
     except AssertionError:
         raise UserWarning("Execution of submitted container failed. Please take a look at the logs and resubmit a new container.")
+        
+    run(['ls', settings['tmp_pred_path']])
 
 
 if __name__ == '__main__':
