@@ -108,6 +108,9 @@ def main():
 
     path_labels = list_img_from_dir(settings['val_labels_path'], '_labels.png')
     path_uncertainties = list_img_from_dir(settings['tmp_pred_path'], '_anomaly.npy')
+    path_segmentation = list_img_from_dir(settings['tmp_pred_path'], '_segmentation.npy')
+    assert len(path_labels) == len(path_uncertainties)
+    assert len(path_labels) == len(path_segmentation)
     im_labels = [np.asarray(Image.open(p)) for p in path_labels]
     im_uncertainties = [np.load(p) for p in path_uncertainties]
 
@@ -118,6 +121,11 @@ def main():
     eps = 0.01
     assert ret['AP'] >= settings['ap'] - eps and ret['AP'] <= settings['ap'] + eps
     assert ret['FPR@95%TPR'] >= settings['fpr'] - eps and ret['FPR@95%TPR'] <= settings['fpr'] + eps
+
+    # finally check that segmentation outputs make sense
+    pred = np.load(path_segmentation[0])
+    assert len(pred.shape) == 2 and pred.shape[0] == 1024 and pred.shape[1] == 2048
+    assert np.all(pred < 20) and np.all(pred >= 0)
     print('Successfully Validated !!!')
 
 
