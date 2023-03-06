@@ -16,12 +16,14 @@ The 'Fishyscapes Web' dataset is updated every three months with a fresh query o
 
 # Metrics
 
-We use Average Precision (AP) as the primary metric of our benchmark. It is invariant to data balance and we are therefore able to accurately compare methods regardless of how many pixels they label as anomaly.
+We use **Average Precision (AP)** as the primary metric of our benchmark. It is invariant to data balance and we are therefore able to accurately compare methods regardless of how many pixels they label as anomaly.
 The tested methods output a continuous score for every pixel. We compute the metrics over all possible thresholds that a binary classifier could compare the output value with. The Average Precision is therefore also independent to the threshold a binary classifier could use.
 
-In order to highlight safety-critical applications, we also compute the False Positive Rate at 95% True Positive Rate (<svg height="1em" viewBox="-2 0 120 51" version="1.1"><text style="font-size:40px;line-height:125%;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="-4.5" y="38">FPR</text><text style="font-size:30px;line-height:125%;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="78.6" y="50.5">95</text></svg>). This resembles the False Positive Rate of a binary classifier that compares the output value of the method against a threshold and classifies all pixels as anomaly that are above the threshold. We take exactly that threshold which results in 95% True Positive Rate, because it is important in safety-critical systems to catch all anomalies, and for this threshold then pick the method which has the lowest number of false positives.
+In order to highlight safety-critical applications, we also compute the **False Positive Rate at 95% True Positive Rate** (<svg height="1em" viewBox="-2 0 120 51" version="1.1"><text style="font-size:40px;line-height:125%;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="-4.5" y="38">FPR</text><text style="font-size:30px;line-height:125%;letter-spacing:0px;fill:#363636;fill-opacity:1;" x="78.6" y="50.5">95</text></svg>). This resembles the False Positive Rate of a binary classifier that compares the output value of the method against a threshold and classifies all pixels as anomaly that are above the threshold. We take exactly that threshold which results in 95% True Positive Rate, because it is important in safety-critical systems to catch all anomalies, and for this threshold then pick the method which has the lowest number of false positives.
 
-For methods that cannot use pretrained segmentation models, but require a special loss, this training or retraining can decrease the performance of the semantic segmentation. We therefore also report the mean intersection over union (mIoU) on the Cityscapes validation set.
+For methods that cannot use pretrained segmentation models, but require a special loss, this training or retraining can decrease the performance of the semantic segmentation. We therefore also report the mean intersection over union **(mIoU) on the Cityscapes validation set**.
+
+**Runtime** is measured in seconds as the total time it takes for a submission to load an image from disk, run inference, and write the results to disk. We measure this as an average over 5000 images on a NVIDIA GTX3090 TI. Slower methods will have higher runtime, but the exact measurements should not be mistaken with the pure inference time.
 
 # Benchmark Results
 
@@ -54,7 +56,12 @@ var table = new Tabulator("#results-table", {
         align:"center",
         formatter: 'lookup',
         formatterParams: {'FALSE': black_cross, 'TRUE': black_tick},
-        headerSort:false}]},
+        headerSort:false},
+       {title:'runtime',
+        field:"runtime",
+        align:"right",
+        headerSort:false}
+    ]},
     {title: 'Cityscapes',
      columns:[
        {title:'mIoU&nbsp;&nbsp;&nbsp;&nbsp;',
