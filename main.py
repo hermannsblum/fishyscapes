@@ -11,6 +11,12 @@ def main():
 
     with open('settings.json', 'r') as f:
         settings = json.load(f)
+    with open('validation_performance.json', 'r') as f:
+        settings.update(json.load(f))
+
+    if settings.get('download_url'):
+        # download image from set url instead of upload form
+        run(['wget', settings['download_url'], '-O', f'/submissions/fishyscapes_pr_{pr_id}', '-o', '/tmp/wget_output.log'])
 
     try:
         run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{pr_id}'), os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')])
@@ -18,6 +24,7 @@ def main():
         raise UserWarning("Failed to copy singularity container. Have you uploaded a container following the website instructions?")
 
     run(['mkdir', '-p', settings['tmp_pred_path']])
+    run(['chmod', '777', settings['tmp_pred_path']])
     run(' '.join(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')]), shell=True)
     cmd = [
         'singularity', 'run', '--nv',
