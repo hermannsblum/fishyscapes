@@ -23,7 +23,7 @@ To submit to fishyscapes, prepare a [apptainer container](https://apptainer.org/
 The folder `/input` contains a number of files of the format `DDDD_*.png` where each `D` is a digit, e.g. `0000_04_Maurener_Weg_8_000000_000030_rgb.png0000_04_Maurener_Weg_8_000000_000030_rgb.png`. It is the same naming convention that is used in the validation set. The container should then save the output for each input in separate files: `/output/DDDD_anomaly.npy` should be a saved numpy array of the same resolution as the input image with per-pixel anomaly scores. `/output/DDDD_segmentation.npy` should be a saved numpy integer array of the same resolution as the input image with a per-pixel assigned class between 0 and 19.
 
 ## recommendations for working with singularity containers
-We recommend to use docker as much as possible and only convert to singularity format as one of the last steps. A good starting point are e.g. the nvidia docker images or existing containers with pre-installed pytorch or tensorflow in the version that you require.
+We recommend to use docker as much as possible and only convert to singularity format as one of the last steps. A good starting point are e.g. the nvidia docker images or existing containers with pre-installed pytorch or tensorflow in the version that you require. You can find an example of how to create a submission container [here](https://github.com/4PiR2/fishyscapes_simg_example).
 
 ## submitting your container
 Once you have a submittable `.simg` singularity container, please follow these steps:
