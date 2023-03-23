@@ -108,7 +108,7 @@ def main():
 
     path_labels = list_img_from_dir(settings['val_labels_path'], '_labels.png')
     path_uncertainties = list_img_from_dir(settings['tmp_pred_path'], '_anomaly.npy')
-    path_segmentation = list_img_from_dir(settings['tmp_pred_path'], '_semantic.npy')
+    path_segmentation = list_img_from_dir(settings['tmp_pred_path'], '_segmentation.npy')
     assert len(path_labels) == len(path_uncertainties)
     assert len(path_labels) == len(path_segmentation)
     im_labels = [np.asarray(Image.open(p)) for p in path_labels]
