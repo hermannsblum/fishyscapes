@@ -7,7 +7,7 @@ import numpy as np
 import time
 from distutils import spawn
 
-from utils import run, calculate_metrics_perpixAP, list_img_from_dir
+from utils import run, calculate_metrics_perpixAP, list_img_from_dir, MeanIoU
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     print(f'pr_id: {pr_id}', flush=True)
     dataset = sys.argv[2]
     print(f'{dataset=}', flush=True)
-    assert dataset in ['lostandfound_fishyscapes', 'fishyscapes_static_ood', 'fishyscapes_5000timingsamples']
+    assert dataset in ['cityscapes_validation']
     
 
     with open('settings.json', 'r') as f:
@@ -32,7 +32,7 @@ def main():
     run(['cp', os.path.join('/cluster', 'scratch', 'blumh', f'fishyscapes_pr_{pr_id}'), simg_path])
 
     cmd = [
-        'singularity', 'run', '--nv', '--writable-tmpfs', '-W', os.environ['TMPDIR'],
+        'singularity', 'run', '--nv', '--writable-tmpfs',
         '--bind', f"{out_path}:/output,"
                   f"{img_path}:/input",
         simg_path
@@ -51,12 +51,17 @@ def main():
     run(['unzip', os.path.join(os.environ['TMPDIR'], 'test_labels.zip'), '-d', label_path])
 
     # evaluate outputs
-    labels = list_img_from_dir(label_path, '_labels.png')[:1000]
-    labels = [np.asarray(Image.open(p)) for p in labels]
-    scores = list_img_from_dir(out_path, '_anomaly.npy')[:1000]
-    scores = [np.load(p) for p in scores]
+    labels = list_img_from_dir(label_path, '_labels.png')
+    preds = list_img_from_dir(out_path, '_segmentation.npy')
+    label_mapping = np.array([-1, -1, -1, -1, -1, -1, -1, 0, 1, -1, -1, 2, 3, 4, -1, -1, -1, 5, -1, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, -1, -1, 16, 17, 18])
+    miou = MeanIoU(num_labels=19, ignore_index=-1)
 
-    ret = calculate_metrics_perpixAP(labels, scores)
+    for i in range(len(labels)):
+        label = label_mapping[np.asarray(Image.open(labels[i]))]
+        pred = np.load(preds[i])
+        print(f"{label.shape=}, {pred.shape=}")
+        miou.update(pred, label)
+    ret = {'miou': miou.compute() }
     ret['inference_time'] = end - start
     print(ret, flush=True)
     wandb.init(project='fishyscapes', 
@@ -64,7 +69,7 @@ def main():
                #mode='offline',
                config=dict(pr=pr_id, dataset=dataset))
     wandb.log(ret)
-    #wandb.finish()
+    wandb.finish()
 
 
 if __name__ == '__main__':

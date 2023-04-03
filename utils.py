@@ -2,6 +2,7 @@ import os
 import numpy as np
 from typing import List
 import subprocess
+from sklearn.metrics import confusion_matrix
 
 
 def run(cmd, cwd=None, env=None):
@@ -120,3 +121,27 @@ def calculate_metrics_perpixAP(labels: List[np.ndarray], uncertainties: List[np.
         'recall': np.array(curve_recall),
         'precision': np.array(curve_precision),
     }
+
+
+class MeanIoU:
+    def __init__(self, num_labels, ignore_index):
+        super().__init__()
+        self.num_labels = num_labels
+        self.ignore_index = ignore_index
+        self.confmat = np.zeros((num_labels, num_labels), dtype=np.int64)
+
+    def update(self, preds, labels):
+        preds = np.asarray(preds).reshape([-1])
+        labels = np.asarray(labels).reshape([-1])
+        valid_points = labels != self.ignore_index
+        preds = preds[valid_points]
+        labels = labels[valid_points]
+        self.confmat += confusion_matrix(labels, preds, labels=list(range(self.num_labels)))
+        print(self.confmat, flush=True)
+
+    def compute(self):
+        intersection = np.diag(self.confmat)
+        union = self.confmat.sum(0) + self.confmat.sum(1) - intersection
+        iou = intersection.astype(float) / union.astype(float)
+        iou[union == 0] = 0.0
+        return (iou).mean()
