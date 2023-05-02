@@ -121,10 +121,7 @@ def main():
     eps = 0.01
     print("==============================")
     print(ret['AP'])
-    # print(ret['fpr'])
     print(ret['FPR@95%TPR'])
-    print(settings['ap'])
-    print(settings['fpr'])
     assert ret['AP'] >= settings['ap'] - eps and ret['AP'] <= settings['ap'] + eps
     assert ret['FPR@95%TPR'] >= settings['fpr'] - eps and ret['FPR@95%TPR'] <= settings['fpr'] + eps
 
