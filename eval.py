@@ -119,6 +119,8 @@ def main():
 
     # threshold for numerical errors
     eps = 0.01
+    print(ret['AP'])
+    print(ret['FPR@'])
     assert ret['AP'] >= settings['ap'] - eps and ret['AP'] <= settings['ap'] + eps
     assert ret['FPR@95%TPR'] >= settings['fpr'] - eps and ret['FPR@95%TPR'] <= settings['fpr'] + eps
 
