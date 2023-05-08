@@ -33,8 +33,7 @@ def main():
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg'),
         'whoami'
     ]
-    try:
-        run(['runuser', '-l', 'blumh', '-c', ' '.join(cmd)])
+    run(['runuser', '-l', 'blumh', '-c', ' '.join(cmd)])
     cmd = [
         'singularity', 'run', '--nv', '-u',
         '--bind', f"{settings['tmp_pred_path']}:/output,"
