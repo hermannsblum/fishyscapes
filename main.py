@@ -31,7 +31,7 @@ def main():
         '--bind', f"{settings['tmp_pred_path']}:/output,"
                   f"{settings['val_rgb_path']}:/input",
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg'),
-        'whoami'
+        'bash -c "whoami && ls -al /home/user && groups"'
     ]
     run(['runuser', '-l', 'blumh', '-c', ' '.join(cmd)])
     cmd = [
