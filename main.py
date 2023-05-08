@@ -27,7 +27,7 @@ def main():
     run(['chmod', '777', settings['tmp_pred_path']])
     run(' '.join(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')]), shell=True)
     cmd = [
-        'singularity', 'run', '--nv',
+        'singularity', 'run', '--nv', '-u',
         '--bind', f"{settings['tmp_pred_path']}:/output,"
                   f"{settings['val_rgb_path']}:/input",
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')
