@@ -26,6 +26,8 @@ def main():
     run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['chmod', '777', settings['tmp_pred_path']])
     run(' '.join(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')]), shell=True)
+    
+    run(['chown', 'root:root', os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')])
     cmd = [
         'singularity', 'exec', '--nv', '--no-privs',
         '--bind', f"{settings['tmp_pred_path']}:/output,"
