@@ -34,7 +34,7 @@ def main():
                   f"{settings['val_rgb_path']}:/input",
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg'),
         #'bash -c "whoami && ls -al /home/user && groups"'
-        '"ls -al /home"'
+        'bash -c "whoami"'
     ]
     run(cmd)
     cmd = [
