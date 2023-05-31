@@ -3,3 +3,6 @@
 fs/settings.py
 
 **/__pycache__
+
+*.tar
+*.sif
