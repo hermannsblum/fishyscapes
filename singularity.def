@@ -2,11 +2,16 @@ Bootstrap: localimage
 From: submission_base.sif
 Stage: build
 
+%post
+    cd /
+    
+    wget https://vicomtech.box.com/shared/static/v0wgedv2kxkahhcapk4r5bkawrebh8ju -O model.pth
+
 %files
     ../flowhybrid /flowhybrid
 
 %runscript
-    wget https://vicomtech.box.com/shared/static/v0wgedv2kxkahhcapk4r5bkawrebh8ju -O model.pth
-
+    cd /
+    
     python3 /flowhybrid/submission.py --input /input --output /output \
-    --weights ./model.pth --num_classes 19 --backbone wrn38 --score_functions base
+    --weights /model.pth --num_classes 19 --backbone wrn38 --score_functions base
