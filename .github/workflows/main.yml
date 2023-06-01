@@ -34,7 +34,7 @@ jobs:
         id: singularity
         if: always()
         run: |
-          python main.py ${{ github.event.number }}
+          python3 main.py ${{ github.event.number }}
 
       - name: Evaluation
         if: steps.singularity.outputs.exit_code == 0
