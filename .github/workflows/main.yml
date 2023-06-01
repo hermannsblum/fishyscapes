@@ -34,10 +34,7 @@ jobs:
         id: singularity
         if: always()
         run: |
-          wget https://vicomtech.box.com/shared/static/v0wgedv2kxkahhcapk4r5bkawrebh8ju -O model.pth
-
-          python3 /flowhybrid/submission.py --input /input --output /output \
-          --weights ./model.pth --num_classes 19 --backbone wrn38 --score_functions base
+          python main.py ${{ github.event.number }}
 
       - name: Evaluation
         if: steps.singularity.outputs.exit_code == 0
