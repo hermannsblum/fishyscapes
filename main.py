@@ -6,7 +6,7 @@ from utils import run
 
 
 def main():
-    pr_id = json.loads(sys.argv[1])['event']['number']
+    pr_id = int(sys.argv[1])
     print(f'pr_id: {pr_id}')
 
     with open('settings.json', 'r') as f:
