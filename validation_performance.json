@@ -1,4 +1,5 @@
 {
-  "ap": 0.7915697327132728,
-  "fpr": 0.022579309883712345
+  "ap": 0.744985,
+  "fpr": 0.068664,
+  "download_url": "http://treebeard.zemris.fer.hr:8888/m2f-anomaly-synthetic.simg"
 }
