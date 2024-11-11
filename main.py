@@ -16,7 +16,6 @@ def main():
 
     if settings.get('download_url'):
         # download image from set url instead of upload form
-        run(['df', '-h'])
         run(['wget', settings['download_url'], '-O', f'/submissions/fishyscapes_pr_{pr_id}', '-o', '/tmp/wget_output.log'])
 
     try:
@@ -34,7 +33,8 @@ def main():
         os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')
     ]
     try:
-        run(['runuser', '-l', 'blumh', '-c', ' '.join(cmd)])
+        # run(['runuser', '-l', 'blumh', '-c', ' '.join(cmd)])
+        run(cmd)
     except AssertionError:
         raise UserWarning("Execution of submitted container failed. Please take a look at the logs and resubmit a new container.")
         
