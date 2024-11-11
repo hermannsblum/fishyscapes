@@ -16,6 +16,7 @@ def main():
 
     if settings.get('download_url'):
         # download image from set url instead of upload form
+        run(['df', '-h'])
         run(['wget', settings['download_url'], '-O', f'/submissions/fishyscapes_pr_{pr_id}', '-o', '/tmp/wget_output.log'])
 
     try:
