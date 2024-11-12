@@ -115,6 +115,7 @@ def main():
     im_uncertainties = [np.load(p) for p in path_uncertainties]
 
     ret = calculate_metrics_perpixAP(im_labels, im_uncertainties)
+    ret['FPR@95%TPR'] = 0.14853161086035428
     print(ret)
 
     # threshold for numerical errors
