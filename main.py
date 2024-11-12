@@ -18,7 +18,7 @@ def main():
         # download image from set url instead of upload form
         run(['wget', settings['download_url'], '-P', '/tmp', '-o', '/tmp/wget_output.log'])
 
-    downloaded_file_path = '/tmp/cad_4.0.simg'
+    downloaded_file_path = '/tmp/cad_5.0.simg'
 
     if not os.path.exists(downloaded_file_path):
         raise UserWarning("Container file not found. Please check the download URL and try again.")
@@ -27,7 +27,7 @@ def main():
     run(['chmod', '777', settings['tmp_pred_path']])
     run(' '.join(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')]), shell=True)
     cmd = [
-        'CUDA_LAUNCH_BLOCKING=1', 'sudo', 'singularity', 'run', '--nv',
+        'sudo', 'singularity', 'run', '--nv',
         '--bind', f"{settings['tmp_pred_path']}:/output,"
                   f"{settings['val_rgb_path']}:/input",
         downloaded_file_path
