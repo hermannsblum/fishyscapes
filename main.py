@@ -18,7 +18,7 @@ def main():
         # download image from set url instead of upload form
         run(['wget', settings['download_url'], '-P', '/tmp', '-o', '/tmp/wget_output.log'])
 
-    downloaded_file_path = '/tmp/cad_6.0.simg'
+    downloaded_file_path = '/tmp/cad_6.2.simg'
 
     if not os.path.exists(downloaded_file_path):
         raise UserWarning("Container file not found. Please check the download URL and try again.")
