@@ -14,6 +14,9 @@ def main():
     with open('validation_performance.json', 'r') as f:
         settings.update(json.load(f))
 
+    run(['sudo', 'rm', '-rf', '/tmp/*'])
+    run(['sudo', 'rm', '-rf', '/var/tmp/*'])
+
     if settings.get('download_url'):
         # download image from set url instead of upload form
         run(['wget', settings['download_url'], '-P', '/tmp', '-o', '/tmp/wget_output.log'])
@@ -24,7 +27,7 @@ def main():
         raise UserWarning("Container file not found. Please check the download URL and try again.")
     
     run(['df', '-h'])
-    run(['sudo', 'modprobe', 'squashfs'])
+    run(['uname', '-r'])
     run(['df', '-h'])
     run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['chmod', '777', settings['tmp_pred_path']])
