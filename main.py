@@ -14,26 +14,32 @@ def main():
     with open('validation_performance.json', 'r') as f:
         settings.update(json.load(f))
 
+    run(['sudo', 'rm', '-rf', '/tmp/*'])
+    run(['sudo', 'rm', '-rf', '/var/tmp/*'])
+
     if settings.get('download_url'):
         # download image from set url instead of upload form
-        run(['wget', settings['download_url'], '-O', f'/submissions/fishyscapes_pr_{pr_id}', '-o', '/tmp/wget_output.log'])
+        run(['wget', settings['download_url'], '-P', '/tmp', '-o', '/tmp/wget_output.log'])
 
-    try:
-        run(['cp', os.path.join('/submissions', f'fishyscapes_pr_{pr_id}'), os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')])
-    except AssertionError:
-        raise UserWarning("Failed to copy singularity container. Have you uploaded a container following the website instructions?")
+    downloaded_file_path = '/tmp/cad_6.2.simg'
 
+    if not os.path.exists(downloaded_file_path):
+        raise UserWarning("Container file not found. Please check the download URL and try again.")
+    
+    run(['df', '-h'])
+    run(['uname', '-r'])
+    run(['df', '-h'])
     run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['chmod', '777', settings['tmp_pred_path']])
     run(' '.join(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')]), shell=True)
     cmd = [
-        'singularity', 'run', '--nv',
+        'sudo', 'singularity', 'run', '--nv',
         '--bind', f"{settings['tmp_pred_path']}:/output,"
                   f"{settings['val_rgb_path']}:/input",
-        os.path.join('/tmp', f'fishyscapes_pr_{pr_id}.simg')
+        downloaded_file_path
     ]
     try:
-        run(['runuser', '-l', 'blumh', '-c', ' '.join(cmd)])
+        run(cmd)
     except AssertionError:
         raise UserWarning("Execution of submitted container failed. Please take a look at the logs and resubmit a new container.")
         
@@ -42,3 +48,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

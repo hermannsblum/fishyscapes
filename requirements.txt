@@ -1,0 +1,11 @@
+dominate
+dill
+scipy
+pandas
+Pillow
+pyyaml
+scikit-image
+imgaug
+sklearn
+tqdm
+natsort
