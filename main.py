@@ -24,6 +24,8 @@ def main():
         raise UserWarning("Container file not found. Please check the download URL and try again.")
     
     run(['df', '-h'])
+    run(['sudo', 'modprobe', 'squashfs'])
+    run(['df', '-h'])
     run(['mkdir', '-p', settings['tmp_pred_path']])
     run(['chmod', '777', settings['tmp_pred_path']])
     run(' '.join(['rm', '-rf', os.path.join(settings['tmp_pred_path'], '*')]), shell=True)
