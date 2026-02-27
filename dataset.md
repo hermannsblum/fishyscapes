@@ -6,7 +6,7 @@ hide_footer: false
 ---
 While most of the datasets remain on the evaluation servers to test methods for truely unknown objects, the FS Lost & Found validation set is publicly available.
 
-<a class="button is-primary" target="_blank" href="http://robotics.ethz.ch/~asl-datasets/Fishyscapes/fishyscapes_lostandfound.zip">download FS Lost & Found validation set</a>
+<a class="button is-primary" target="_blank" href="https://zenodo.org/records/6511227">download FS Lost & Found validation set</a>
 
 Below we document code that integrates the dataset with TFDS and BDL-Benchmark. This will also allow to download a small validation set of FS Static. We can not provide a zip download for FS Static since we are not allowed to host the Cityscapes data. Our code automatically generates the dataset from Cityscapes.
 
